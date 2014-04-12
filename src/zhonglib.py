@@ -5,7 +5,7 @@ import codecs
 
 decomp_table = {}
 
-def load_data():
+def load_decomposition_data():
     directory = os.path.dirname(__file__)
     data_file = os.path.join(directory, 'data/cjk-decomp-0.4.0.txt') 
     if not os.path.exists(data_file):
@@ -24,8 +24,13 @@ def load_data():
                 components = []
             decomp_table[character] = components
 
+def lazy_load_decomposition_data():
+    if len(decomp_table) == 0:
+        load_decomposition_data()
+
 # Assumes that 'ch' is encoded in utf-8
 def decompose_character(ch, type=None):
+    lazy_load_decomposition_data()
     return decomp_table[ch]
 
 def is_unicode_kangxi_radical(ch):
@@ -41,5 +46,3 @@ def is_unicode_radical(ch):
 
 def is_unicode_stroke(ch):
     return '㇀' <= ch and ch <= '㇣'
-
-load_data()
