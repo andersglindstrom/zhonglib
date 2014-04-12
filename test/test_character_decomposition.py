@@ -8,14 +8,15 @@ import zhonglib as zl
 # They have different unicode values but are usually rendered
 # identically.
 #
+# It seems that the decomposition data does not use
+# Unicode radicals.  Rather, the very lowest components
+# are strokes.  I don't know why this is the case.  I don't
+# know yet whether it matters too much.
+#
 # Each character can have a 'level' assigned to it, which
 # reflects how many decompositions are required to reach
 # the a level 0 component.  That is, a level 0 component
 # cannot be decomposed any further.
-#
-# It seems that the decomposition data does not use
-# Unicode radicals.  Rather, the very lowest components
-# are strokes.
 #
 # Radical are not always level 0 components because they
 # can be composed of other components. However, they may
