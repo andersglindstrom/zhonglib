@@ -21,7 +21,7 @@ def load_decomposition_data():
             if len(components_string) > 0:
                 components = components_string.split(',')
             else:
-                components = []
+                components = None
             decomp_table[character] = components
 
 def lazy_load_decomposition_data():
@@ -29,9 +29,15 @@ def lazy_load_decomposition_data():
         load_decomposition_data()
 
 # Assumes that 'ch' is encoded in utf-8
+# Returns a tree
+# Each node is a 2-tuple of (character, list of child nodes)
+# Leaf nodes have an empty child list.
 def decompose_character(ch, type=None):
     lazy_load_decomposition_data()
-    return decomp_table[ch]
+    components = decomp_table[ch]
+    if components:
+        components = [ decompose_character(component) for component in components]
+    return (ch, components)
 
 def is_unicode_kangxi_radical(ch):
     # See http://en.wikipedia.org/wiki/Kangxi_Radicals#Unicode

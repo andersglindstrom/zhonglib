@@ -69,7 +69,7 @@ class TestCharacterDecomposition(unittest.TestCase):
         # above.
         stroke_one = '㇐'
         self.assertTrue(zl.is_unicode_stroke(stroke_one))
-        self.assertEqual([], zl.decompose_character(stroke_one))
+        self.assertEqual((stroke_one, None), zl.decompose_character(stroke_one))
 
     def test_level_1_character(self):
         # Test that the character  '一' is decomposed into the
@@ -79,10 +79,20 @@ class TestCharacterDecomposition(unittest.TestCase):
 
         self.assertTrue(zl.is_unicode_stroke(stroke_one))
         self.assertFalse(zl.is_unicode_radical(character_yi))
-        self.assertEqual([stroke_one], zl.decompose_character(character_yi))
+        
+        expected = (character_yi, [
+            (stroke_one, None)
+        ])
+        actual = zl.decompose_character(character_yi)
+        self.assertEqual(expected, actual)
 
     def test_level_2_character(self):
-        self.assertEqual(['㇓', '㇒'], zl.decompose_character('⺁'))
+        expected = ('⺁', [
+            ('㇓',None),
+            ('㇒',None)
+        ])
+        actual = zl.decompose_character('⺁')
+        self.assertEqual(expected, actual)
 
     def disabled_test_radical_variant(self):
         # 髙 is a variant of 高
