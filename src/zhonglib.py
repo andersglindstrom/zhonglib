@@ -16,7 +16,7 @@ VARIANT_OF  = 4
 _constant_codes = {
 
     'c' : COMPOSED_OF,
-    'v' : VARIANT_OF
+    'v' : VARIANT_OF,
 
     'z' : CHARACTER,  # 'z' for 'zi'; i.e. Mandarin for character
     'g' : GROUP
