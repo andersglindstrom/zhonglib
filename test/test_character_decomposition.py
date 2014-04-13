@@ -50,10 +50,10 @@ class TestCharacterDecomposition(unittest.TestCase):
     _character_q    = ('q', zl.CHARACTER, zl.COMPOSED_OF, None)
     _character_r    = ('r', zl.CHARACTER, zl.COMPOSED_OF, [ _character_n, _character_p ])
     _character_s    = ('s', zl.CHARACTER, zl.COMPOSED_OF, [ _character_r, _character_q ])
-    _group_1        = ( 1,  zl.GROUP,     zl.COMPOSED_OF, [ _character_p, _character_q ])
-    _character_t    = ('t', zl.CHARACTER, zl.COMPOSED_OF, [ _character_r, _character_q ])
+    _group_1        = ('1', zl.GROUP,     zl.COMPOSED_OF, [ _character_p, _character_q ])
+    _character_t    = ('t', zl.CHARACTER, zl.COMPOSED_OF, [ _group_1, _character_n ])
     _character_u    = ('u', zl.CHARACTER, zl.VARIANT_OF, _character_t )
-    _group_2        = ( 2,  zl.GROUP,     zl.COMPOSED_OF, [ _character_t, _group_1 ])
+    _group_2        = ('2', zl.GROUP,     zl.COMPOSED_OF, [ _character_t, _group_1 ])
 
     def setUp(self):
         decomp_data_file = os.path.join(
@@ -79,8 +79,11 @@ class TestCharacterDecomposition(unittest.TestCase):
     def test_level_two_character(self):
         self.assertEqual(self._character_s, self.decompose('s'))
 
-    def test_group(self):
-        self.assertEqual(self._group_1, self.decompose(1))
+    def test_level_one_group(self):
+        self.assertEqual(self._group_1, self.decompose('1'))
+
+    def test_character_composed_of_group(self):
+        self.assertEqual(self._character_t, self.decompose('t'))
 
     def disable_test_level_2_character(self):
         expected = ('⺁', [
