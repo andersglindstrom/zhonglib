@@ -98,9 +98,9 @@ class Decomposer:
 
         with codecs.open(self._file_name, 'r', encoding='utf-8') as f:
             for line in f:
-                node_id, node_type, relation_type, referent = self._parse_line(line)
-                assert(not node_id in self._decomp_table)
-                self._decomp_table[node_id] = (node_id, node_type, relation_type, referent)
+                record = self._parse_line(line)
+                assert(not record_id(record) in self._decomp_table)
+                self._decomp_table[record_id(record)] = record
 
     # Returns a tree.
     def decompose(self, ch):
