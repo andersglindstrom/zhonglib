@@ -77,7 +77,7 @@ class Decomposer:
         # character. There should only be one character.
         # The referent in this relation is the primary character.
         if relation_type == VARIANT_OF:
-            assert(len(referent_string) == 1)
+            assert(node_type == CHARACTER and len(referent_string) == 1)
             referent = referent_string
         else:
             # Second case, this character is composed of other
