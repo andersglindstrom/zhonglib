@@ -88,5 +88,8 @@ class TestCharacterDecomposition(unittest.TestCase):
     def test_variant(self):
         self.assertEqual(self._character_u, self.decompose('u'))
 
+    def test_group_with_group(self):
+        self.assertEqual(self._group_2, self.decompose('2'))
+
 if __name__ == '__main__':
     unittest.main()
