@@ -73,7 +73,7 @@ class TestCharacterDecomposition(unittest.TestCase):
         self.assertEqual(self._character_n, self.decompose('n'))
 
     def test_level_one_character(self):
-        pass
+        self.assertEqual(self._character_r, self.decompose('r'))
 
     def disable_test_level_2_character(self):
         expected = ('⺁', [

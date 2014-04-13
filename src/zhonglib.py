@@ -21,6 +21,18 @@ _relation_map = {
     'v' : VARIANT_OF
 }
 
+def record_id(record):
+    return record[0]
+
+def record_type(record):
+    return record[1]
+
+def record_relation_type(record):
+    return record[2]
+
+def record_referent(record):
+    return record[3]
+
 class Decomposer:
 
     def __init__(self, file_name):
@@ -102,10 +114,23 @@ class Decomposer:
         except KeyError:
             raise RuntimeError("No decomposition data for " + repr(ch))
 
-        if record[3] == None:
-            # This is a simple character that has no components
-            return record
-        pass
+        relation_type = record_relation_type(record)
+        if relation_type == COMPOSED_OF:
+            referent = record_referent(record)
+            if referent == None: 
+                return record
+            else:
+                component_ids = record_referent(record)
+                components = [self.decompose(i) for i in component_ids]
+                return (
+                    record_id(record),
+                    record_type(record),
+                    record_relation_type(record),
+                    components
+                )
+        else:
+            assert(relation_type == VARIANT_OF)
+            pass
 
     def __str__(self):
         return str(self._decomp_table)
