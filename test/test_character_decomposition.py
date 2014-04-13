@@ -45,10 +45,11 @@ class TestCharacterDecomposition(unittest.TestCase):
     # These are the in-memory representations of the decomposition
     # file.
 
+    _character_m    = ('m', zl.CHARACTER, zl.COMPOSED_OF, None)
     _character_n    = ('n', zl.CHARACTER, zl.COMPOSED_OF, None)
     _character_p    = ('p', zl.CHARACTER, zl.COMPOSED_OF, None)
     _character_q    = ('q', zl.CHARACTER, zl.COMPOSED_OF, None)
-    _character_r    = ('r', zl.CHARACTER, zl.COMPOSED_OF, [ _character_n, _character_p ])
+    _character_r    = ('r', zl.CHARACTER, zl.COMPOSED_OF, [ _character_m, _character_n, _character_p ])
     _character_s    = ('s', zl.CHARACTER, zl.COMPOSED_OF, [ _character_r, _character_q ])
     _group_1        = ('1', zl.GROUP,     zl.COMPOSED_OF, [ _character_p, _character_q ])
     _character_t    = ('t', zl.CHARACTER, zl.COMPOSED_OF, [ _group_1, _character_n ])
