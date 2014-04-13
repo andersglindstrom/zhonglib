@@ -13,6 +13,7 @@ GROUP       = 2
 COMPOSED_OF = 3
 VARIANT_OF  = 4
 
+# These codes are used in the file to represent the abovementioned constants.
 _constant_codes = {
 
     'c' : COMPOSED_OF,
@@ -21,7 +22,6 @@ _constant_codes = {
     'z' : CHARACTER,  # 'z' for 'zi'; i.e. Mandarin for character
     'g' : GROUP
 }
-
 
 def record_id(record):
     return record[0]
