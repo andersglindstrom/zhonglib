@@ -3,41 +3,112 @@
 import os.path
 import codecs
 
-decomp_table = {}
+# Enumerations
 
-def load_decomposition_data():
-    directory = os.path.dirname(__file__)
-    data_file = os.path.join(directory, 'data/cjk-decomp-0.4.0.txt') 
-    if not os.path.exists(data_file):
-        msg = "Decomposition data file does not exist: " + data_file
-        raise RuntimeError(msg)
-    with codecs.open(data_file, 'r', encoding='utf-8') as f:
-        for line in f:
-            sep_idx = line.find(':')
-            components_start = line.find('(')+1
-            components_end = line.rfind(')')
-            character = line[:sep_idx]
-            components_string = line[components_start:components_end]
-            if len(components_string) > 0:
-                components = components_string.split(',')
-            else:
-                components = None
-            decomp_table[character] = components
+CHARACTER  = 1
+GROUP      = 2
 
-def lazy_load_decomposition_data():
-    if len(decomp_table) == 0:
-        load_decomposition_data()
+_node_type_map = {
+    'z':CHARACTER,  # Use 'z' here rather than 'c' to avoid confusion with COMPOSED_OF
+    'g':GROUP
+}
 
-# Assumes that 'ch' is encoded in utf-8
-# Returns a tree
-# Each node is a 2-tuple of (character, list of child nodes)
-# Leaf nodes have an empty child list.
-def decompose_character(ch, type=None):
-    lazy_load_decomposition_data()
-    components = decomp_table[ch]
-    if components:
-        components = [ decompose_character(component) for component in components]
-    return (ch, components)
+COMPOSED_OF = 3
+VARIANT_OF  = 4
+
+_relation_map = {
+    'c' : COMPOSED_OF,
+    'v' : VARIANT_OF
+}
+
+class Decomposer:
+
+    def __init__(self, file_name):
+        self._decomp_table = {}
+        self._file_name = file_name
+        self._load_decomposition_data()
+
+
+    # Returns a 4-tuple representing the relation between a node ID
+    # and a referent.
+    #   1. The node ID. Either a Unicode character or an integer group ID. To avoid
+    #           clashes, group IDs are put into the private use area of the Unicode
+    #           code space.  However, they do not represent actual characters.
+    #   2. The node type: (CHARACTER, GROUP)
+    #   3. The relation type: (VARIANT_OF, COMPOSED_OF)
+    #   4. The referent in the relation.  Either a single character when the
+    #           relation is VARIANT_OF or a list of component characters.
+    def _parse_line(self, line_string):
+        split_line = line_string.strip().split(':')
+
+        # Extract the four fields as strings
+        id_string = split_line[0]
+        type_string = split_line[1]
+        relation_string = split_line[2]
+        referent_string = split_line[3]
+
+        # Turn the strings into binary
+
+        # 1. The node type
+        node_type = _node_type_map[type_string]
+
+        # 2. The node ID
+        if node_type == GROUP:
+            # The ID is the group ID
+            node_id = int(id_string)
+        else:
+            # The ID is a single Unicode character
+            assert(len(id_string) == 1)
+            node_id = id_string
+
+        # 3. The type of relation the node represents
+        relation_type = _relation_map[relation_string]
+
+        # 4. The referent
+
+        # First case, this character is a variant of a primary
+        # character. There should only be one character.
+        # The referent in this relation is the primary character.
+        if relation_type == VARIANT_OF:
+            assert(len(referent_string) == 1)
+            referent = referent_string
+        else:
+            # Second case, this character is composed of other
+            # simpler characters. The referent in this relation
+            # is a list of the component characters.
+            #
+            # The simplest characters have no component characters.
+            referent = None
+            if len(referent_string) > 0:
+                referent = referent_string.split(',')
+
+        return (node_id, node_type, relation_type, referent)
+
+    def _load_decomposition_data(self):
+        if not os.path.exists(self._file_name):
+            msg = "Decomposition data file does not exist: " + self._file_name
+            raise RuntimeError(msg)
+
+        with codecs.open(self._file_name, 'r', encoding='utf-8') as f:
+            for line in f:
+                node_id, node_type, relation_type, referent = self._parse_line(line)
+                assert(not node_id in self._decomp_table)
+                self._decomp_table[node_id] = (node_id, node_type, relation_type, referent)
+
+    # Returns a tree.
+    def decompose(self, ch):
+        try:
+            record = self._decomp_table[ch]
+        except KeyError:
+            raise RuntimeError("No decomposition data for " + repr(ch))
+
+        if record[3] == None:
+            # This is a simple character that has no components
+            return record
+        pass
+
+    def __str__(self):
+        return str(self._decomp_table)
 
 def is_unicode_kangxi_radical(ch):
     # See http://en.wikipedia.org/wiki/Kangxi_Radicals#Unicode
@@ -45,8 +116,7 @@ def is_unicode_kangxi_radical(ch):
 
 def is_unicode_supplemental_radical(ch):
     # See ttp://en.wikipedia.org/wiki/CJK_Radicals_Supplement
-    return '⺀' <= ch and ch <= '⻳'
-
+    return '⺀' <= ch and ch <= '⻳' 
 def is_unicode_radical(ch):
     return is_unicode_kangxi_radical(ch) or is_unicode_supplemental_radical(ch)
 
