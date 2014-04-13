@@ -102,7 +102,8 @@ class Decomposer:
                 assert(not record_id(record) in self._decomp_table)
                 self._decomp_table[record_id(record)] = record
 
-    # Returns a tree.
+    # Returns a tree. Symbolic references between nodes are resolved
+    # into direct references so forming a recursive data structure.
     def decompose(self, ch):
         try:
             record = self._decomp_table[ch]
@@ -111,20 +112,20 @@ class Decomposer:
 
         relation_type = record_relation_type(record)
         if relation_type == COMPOSED_OF:
-            referent = record_referent(record)
-            if referent == None: 
+            component_ids = record_referent(record)
+            if component_ids == None: 
                 return record
             else:
-                component_ids = record_referent(record)
-                components = [self.decompose(i) for i in component_ids]
+                # Replace component IDs with references to nodes.
                 return (
                     record_id(record),
                     record_type(record),
                     record_relation_type(record),
-                    components
+                    [self.decompose(i) for i in component_ids]
                 )
         else:
             assert(relation_type == VARIANT_OF)
+            # Replace ID of primary character with a reference to a node.
             return (
                 record_id(record),
                 record_type(record),
