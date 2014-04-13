@@ -125,7 +125,12 @@ class Decomposer:
                 )
         else:
             assert(relation_type == VARIANT_OF)
-            pass
+            return (
+                record_id(record),
+                record_type(record),
+                record_relation_type(record),
+                self.decompose(record_referent(record))
+            )
 
     def __str__(self):
         return str(self._decomp_table)

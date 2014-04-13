@@ -85,31 +85,8 @@ class TestCharacterDecomposition(unittest.TestCase):
     def test_character_composed_of_group(self):
         self.assertEqual(self._character_t, self.decompose('t'))
 
-    def disable_test_level_2_character(self):
-        expected = ('⺁', [
-            (zl.COMPONENT, '㇓', None),
-            (zl.COMPONENT, '㇒', None)
-        ])
-        actual = self.decompose('⺁')
-        self.assertEqual(expected, actual)
-
-    def disable_test_radical_variant(self):
-        # 髙 is a variant of 高
-        # It is easier to remember that fact than to remember a new
-        # decomposition.
-        self.maxDiff = None
-        expected = ('髙', [
-            (zl.VARIANT, '高', [
-                (zl.COMPONENT, '37045', [
-                    (zl.COMPONENT, '亠', [
-                        (zl.COMPONENT, '㇐', None),
-                        (zl.COMPONENT, '㇔', None)
-                    ]),
-                    (zl.COMPONENT, '口', [])
-                ])
-            ])
-        ])
-        self.assertEqual(expected, self.decompose('髙'))
+    def test_variant(self):
+        self.assertEqual(self._character_u, self.decompose('u'))
 
 if __name__ == '__main__':
     unittest.main()
