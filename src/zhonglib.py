@@ -3,23 +3,25 @@
 import os.path
 import codecs
 
-# Enumerations
+# Constants
 
-CHARACTER  = 1
-GROUP      = 2
+# Node type
+CHARACTER   = 1
+GROUP       = 2
 
-_node_type_map = {
-    'z':CHARACTER,  # Use 'z' here rather than 'c' to avoid confusion with COMPOSED_OF
-    'g':GROUP
-}
-
+# Relation type
 COMPOSED_OF = 3
 VARIANT_OF  = 4
 
-_relation_map = {
+_constant_codes = {
+
     'c' : COMPOSED_OF,
     'v' : VARIANT_OF
+
+    'z' : CHARACTER,  # 'z' for 'zi'; i.e. Mandarin for character
+    'g' : GROUP
 }
+
 
 def record_id(record):
     return record[0]
@@ -64,12 +66,12 @@ class Decomposer:
         # Turn the strings into binary
 
         # 1. The node type
-        node_type = _node_type_map[type_string]
+        node_type = _constant_codes[type_string]
 
         # 2. The node ID does not need to be parsed
 
         # 3. The type of relation the node represents
-        relation_type = _relation_map[relation_string]
+        relation_type = _constant_codes[relation_string]
 
         # 4. The referent
 
