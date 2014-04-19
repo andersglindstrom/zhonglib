@@ -45,15 +45,13 @@ class Decomposer:
 
     # Returns a 4-tuple representing the relation between a node ID
     # and a referent.
-    #   1. The node ID. Either a Unicode character or an integer group ID. To avoid
-    #           clashes, group IDs should be put into the private use area of the Unicode
-    #           code space.  However, they do not represent actual characters.
-    #           Group IDs in the file must have a length greater than 1.  This allows
-    #           for easy identification of group IDs in the component lists.
+    #   1. The node ID. If the node ID has length one, it is considered to represent
+    #       a character.  Otherwise, it is a group ID.
     #   2. The node type: (CHARACTER, GROUP)
     #   3. The relation type: (VARIANT_OF, COMPOSED_OF)
     #   4. The referent in the relation.  Either a single character when the
-    #           relation is VARIANT_OF or a list of component characters.
+    #           relation is VARIANT_OF or a list of component characters when the
+    #           relation is COMPOSED_OF.
     def _parse_line(self, line_string):
         split_line = line_string.strip().split(':')
 
