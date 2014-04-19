@@ -8,3 +8,6 @@ s:z:c:r,q
 t:z:c:1,n
 u:z:v:t
 2:g:c:t,1
+子:z:c:
+女:z:c:
+好:z:c:女,子

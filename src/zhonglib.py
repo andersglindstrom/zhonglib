@@ -110,7 +110,7 @@ class Decomposer:
         try:
             record = self._decomp_table[ch]
         except KeyError:
-            raise RuntimeError("No decomposition data for " + repr(ch))
+            raise RuntimeError('No decomposition data for ' + repr(ch))
 
         relation_type = record_relation_type(record)
         if relation_type == COMPOSED_OF:
@@ -140,13 +140,14 @@ class Decomposer:
 
 def is_unicode_kangxi_radical(ch):
     # See http://en.wikipedia.org/wiki/Kangxi_Radicals#Unicode
-    return '⼀' <= ch and ch <= '⿕'
+    return u'⼀' <= ch and ch <= u'⿕'
 
 def is_unicode_supplemental_radical(ch):
     # See ttp://en.wikipedia.org/wiki/CJK_Radicals_Supplement
-    return '⺀' <= ch and ch <= '⻳' 
+    return u'⺀' <= ch and ch <= u'⻳' 
+
 def is_unicode_radical(ch):
     return is_unicode_kangxi_radical(ch) or is_unicode_supplemental_radical(ch)
 
 def is_unicode_stroke(ch):
-    return '㇀' <= ch and ch <= '㇣'
+    return u'㇀' <= ch and ch <= u'㇣'
