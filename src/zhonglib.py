@@ -194,6 +194,7 @@ def create_dictionary(source, destination):
 
 from whoosh.query import Term
 
+
 class Entry:
 
     def __init__(self, traditional, simplified, pinyin, raw_meaning):
@@ -201,6 +202,26 @@ class Entry:
         self.simplified = simplified
         self.pinyin = pinyin
         self.raw_meaning = raw_meaning
+        self.meaning = []
+        self.traditional_measure_words = []
+        self.simplified_measure_words = []
+        self._extract_parts(raw_meaning)
+
+    def _extract_parts(self, raw_meaning):
+        parts = raw_meaning[1:-1].split('/')
+        for part in parts:
+            if not part.startswith('CL:'):
+                self.meaning.append(part)
+            else: # is a measure word
+                part = part[3:] # Remove 'CL:'
+                part = part[:part.find('[')]    # Remove pinyin
+                if len(part) == 1:
+                    self.traditional_measure_words.append(part)
+                    self.simplified_measure_words.append(part)
+                else:
+                    assert(part[1] == '|')
+                    self.traditional_measure_words.append(part[0])
+                    self.simplified_measure_words.append(part[2])
 
 class Dictionary:
 
