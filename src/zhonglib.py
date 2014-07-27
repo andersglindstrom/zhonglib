@@ -149,3 +149,79 @@ def is_unicode_radical(ch):
 
 def is_unicode_stroke(ch):
     return u'㇀' <= ch and ch <= u'㇣'
+
+from whoosh.index import create_in, open_dir
+from whoosh.fields import *
+import string
+
+def parse_dictionary_line(line):
+    start = 0
+    end = string.find(line, " ", start)
+    traditional = line[start:end]
+    start = end+1
+    end = string.find(line, " ", start)
+    simplified = line[start:end]
+    start = end+1
+    end = string.find(line, "]", start)+1
+    pinyin = line[start:end]
+    start = end+1
+    meaning = line[start:].rstrip()
+    return traditional, simplified, pinyin, meaning
+
+# Given a file in the CC-CEDICT format, this function creates a Whoosh
+# index that is used later for searching
+def create_dictionary(source, destination):
+    schema = Schema(traditional=TEXT(stored=True),
+                    simplified=TEXT(stored=True),
+                    pinyin=TEXT(stored=True),
+                    meaning=TEXT(stored=True))
+    if os.path.exists(destination):
+        msg = "Dictionary already exists: " + destination
+        raise RuntimeError(msg)
+    os.mkdir(destination)
+    index = create_in(destination, schema)
+    writer = index.writer()
+    with codecs.open(source, 'r', encoding='utf-8') as f:
+        for line in f:
+            if not line[0] == '#':
+                trad, simp, pin, mean = parse_dictionary_line(line)
+                writer.add_document(
+                        traditional=trad,
+                        simplified=simp,
+                        pinyin=pin,
+                        meaning=mean)
+    writer.commit()
+
+from whoosh.query import Term
+
+class Entry:
+
+    def __init__(self, traditional, simplified, pinyin, raw_meaning):
+        self.traditional = traditional
+        self.simplified = simplified
+        self.pinyin = pinyin
+        self.raw_meaning = raw_meaning
+
+class Dictionary:
+
+    # dict_path is path to dictionary created previously by 
+    # 'create_dictionary'
+
+    def __init__(self, dict_path):
+        self._index =  open_dir(dict_path)
+
+    def find(self, search_string):
+        with self._index.searcher() as searcher:
+            query = Term("traditional", search_string) \
+                        | Term('simplified', search_string) \
+                        | Term('meaning', search_string)
+            results = searcher.search(query)
+            return_value = []
+            for result in results:
+                return_value.append(Entry(
+                    result['traditional'],
+                    result['simplified'],
+                    result['pinyin'],
+                    result['meaning']
+                ));
+            return return_value
