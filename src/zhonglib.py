@@ -149,6 +149,7 @@ def is_unicode_radical(ch):
 def is_unicode_stroke(ch):
     return u'㇀' <= ch and ch <= u'㇣'
 
+import whoosh.analysis
 from whoosh.index import create_in, open_dir
 from whoosh.fields import *
 import string
@@ -170,8 +171,9 @@ def parse_dictionary_line(line):
 # Given a file in the CC-CEDICT format, this function creates a Whoosh
 # index that is used later for searching
 def create_dictionary(source, destination, verbose=False):
-    schema = Schema(traditional=TEXT(stored=True),
-                    simplified=TEXT(stored=True),
+    chinese_analyzer = whoosh.analysis.IDTokenizer()
+    schema = Schema(traditional=TEXT(stored=True, analyzer=chinese_analyzer),
+                    simplified=TEXT(stored=True, analyzer=chinese_analyzer),
                     pinyin=TEXT(stored=True),
                     meaning=TEXT(stored=True))
     if os.path.exists(destination):

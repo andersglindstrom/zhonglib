@@ -61,12 +61,11 @@ class TestDictionary(unittest.TestCase):
         self.assertEqual(1, len(result))
         self.gateway_1_checks(result[0])
 
-    def test_simplified_1(self):
+    def test_simplified_2(self):
         result = self._dictionary.find(u'门口')
         self.assertTrue(result != None)
         self.assertEqual(1, len(result))
         self.gateway_2_checks(result[0])
-        
         
     def test_meaning_1_1(self):
         result = self._dictionary.find(u'gate')
