@@ -107,8 +107,7 @@ class Decomposer:
     def decompose(self, ch):
         try:
             record = self._decomp_table[ch]
-        except KeyError:
-            raise RuntimeError('No decomposition data for ' + repr(ch))
+        except KeyError: raise RuntimeError('No decomposition data for ' + repr(ch))
 
         relation_type = record_relation_type(record)
         if relation_type == COMPOSED_OF:
@@ -170,7 +169,7 @@ def parse_dictionary_line(line):
 
 # Given a file in the CC-CEDICT format, this function creates a Whoosh
 # index that is used later for searching
-def create_dictionary(source, destination):
+def create_dictionary(source, destination, verbose=False):
     schema = Schema(traditional=TEXT(stored=True),
                     simplified=TEXT(stored=True),
                     pinyin=TEXT(stored=True),
@@ -179,21 +178,27 @@ def create_dictionary(source, destination):
         msg = "Dictionary already exists: " + destination
         raise RuntimeError(msg)
     os.mkdir(destination)
+    if verbose:
+        num_lines = sum(1 for line in open(source))
+        line_count = 0
     index = create_in(destination, schema)
-    writer = index.writer()
     with codecs.open(source, 'r', encoding='utf-8') as f:
         for line in f:
             if not line[0] == '#':
                 trad, simp, pin, mean = parse_dictionary_line(line)
+                if verbose:
+                    line_count += 1
+                    pct_done = 100.0*line_count/num_lines
+                    print pct_done, '% done. Added "'+trad+'"'
+                writer = index.writer()
                 writer.add_document(
                         traditional=trad,
                         simplified=simp,
                         pinyin=pin,
                         meaning=mean)
-    writer.commit()
+                writer.commit()
 
 from whoosh.query import Term
-
 
 class Entry:
 
@@ -246,3 +251,10 @@ class Dictionary:
                     result['meaning']
                 ));
             return return_value
+
+def standard_dictionary():
+    dictionary_dir = os.path.join(
+            os.path.dirname(__file__),
+            'zhonglib-data',
+            'dictionary')
+    return Dictionary(dictionary_dir)

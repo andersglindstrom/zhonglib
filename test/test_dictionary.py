@@ -17,7 +17,7 @@ class TestDictionary(unittest.TestCase):
                 'test_dictionary')
         if os.path.exists(dictionary_dir):
             shutil.rmtree(dictionary_dir)
-        zl.create_dictionary(dictionary_file, dictionary_dir)
+        zl.create_dictionary(dictionary_file, dictionary_dir, True)
         self._dictionary = zl.Dictionary(dictionary_dir)
 
     def gateway_1_checks(self, result):
@@ -44,16 +44,29 @@ class TestDictionary(unittest.TestCase):
         self.assertEqual([u'个'], result.simplified_measure_words)
 
     def test_traditional_1(self):
+        result = self._dictionary.find(u'門')
+        self.assertTrue(result != None)
+        self.assertEqual(1, len(result))
+        self.gateway_1_checks(result[0])
+
+    def test_traditional_2(self):
         result = self._dictionary.find(u'門口')
         self.assertTrue(result != None)
         self.assertEqual(1, len(result))
         self.gateway_2_checks(result[0])
 
     def test_simplified_1(self):
+        result = self._dictionary.find(u'门')
+        self.assertTrue(result != None)
+        self.assertEqual(1, len(result))
+        self.gateway_1_checks(result[0])
+
+    def test_simplified_1(self):
         result = self._dictionary.find(u'门口')
         self.assertTrue(result != None)
         self.assertEqual(1, len(result))
         self.gateway_2_checks(result[0])
+        
         
     def test_meaning_1_1(self):
         result = self._dictionary.find(u'gate')
