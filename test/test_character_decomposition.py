@@ -28,7 +28,7 @@ class TestCharacterDecomposition(unittest.TestCase):
         decomp_data_file = os.path.join(
                                 os.path.dirname(__file__),
                                 'test_decomposition_data.txt')
-        self._decomposer = zl.Decomposer(decomp_data_file)
+        self._decomposer = zl.CharacterDecomposer(decomp_data_file)
 
     def decompose(self, ch):
         return self._decomposer.decompose(ch)

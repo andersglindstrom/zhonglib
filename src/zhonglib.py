@@ -35,7 +35,7 @@ def record_relation_type(record):
 def record_referent(record):
     return record[3]
 
-class Decomposer:
+class CharacterDecomposer:
 
     def __init__(self, file_name):
         self._decomp_table = {}
