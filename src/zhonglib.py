@@ -255,9 +255,35 @@ class Dictionary:
                 ));
             return return_value
 
+__standard_dictionary = Dictionary(os.path.join(
+    os.path.dirname(__file__),
+    'zhonglib-data',
+    'dictionary'
+))
+
 def standard_dictionary():
-    dictionary_dir = os.path.join(
-            os.path.dirname(__file__),
-            'zhonglib-data',
-            'dictionary')
-    return Dictionary(dictionary_dir)
+    return __standard_dictionary
+
+def find(word):
+    return __standard_dictionary.find(word)
+
+def flatten_one_level_down(record):
+    if record_type(record) == CHARACTER:
+        return record_id(record)
+    assert record_type(record) == GROUP
+    children = record_referent(record)
+    result = []
+    for child in children:
+        result += flatten_one_level_down(child)
+    return result
+
+def flatten_decomposition(record):
+    if record_type(record) == CHARACTER and record_referent(record) == None:
+        return list(record_id(record))
+    if record_type(record) == CHARACTER and record_relation_type(record) == VARIANT_OF:
+        return flatten_decomposition(record_referent(record))
+    children = record_referent(record)
+    result = []
+    for child in children:
+        result += flatten_one_level_down(child)
+    return result

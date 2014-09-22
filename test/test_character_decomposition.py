@@ -64,5 +64,13 @@ class TestCharacterDecomposition(unittest.TestCase):
         self.assertEqual(self._character_nu, self.decompose(u'女'))
         self.assertEqual(self._character_hao, self.decompose(u'好'))
 
+    def test_flatten_decomposition(self):
+        self.assertEquals(['m'], zl.flatten_decomposition(self._character_m))
+        self.assertEquals(['m', 'n', 'p'], zl.flatten_decomposition(self._character_r))
+        self.assertEquals(['p', 'q'], zl.flatten_decomposition(self._group_1))
+        self.assertEquals(['p', 'q', 'n'], zl.flatten_decomposition(self._character_t))
+        self.assertEquals(['p', 'q', 'n'], zl.flatten_decomposition(self._character_u))
+        self.assertEquals(['t', 'p', 'q'], zl.flatten_decomposition(self._group_2))
+
 if __name__ == '__main__':
     unittest.main()
