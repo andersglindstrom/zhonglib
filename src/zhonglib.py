@@ -171,9 +171,10 @@ def parse_dictionary_line(line):
 # Given a file in the CC-CEDICT format, this function creates a Whoosh
 # index that is used later for searching
 def create_dictionary(source, destination, verbose=False):
-    chinese_analyzer = whoosh.analysis.IDTokenizer()
-    schema = Schema(traditional=TEXT(stored=True, analyzer=chinese_analyzer),
-                    simplified=TEXT(stored=True, analyzer=chinese_analyzer),
+    # Use ID field for Chinese words because they are already tokenized.
+    # Using TEXT doesn't work properly because single letter words are ignored.
+    schema = Schema(traditional=ID(stored=True),
+                    simplified=ID(stored=True),
                     pinyin=TEXT(stored=True),
                     meaning=TEXT(stored=True))
     if os.path.exists(destination):

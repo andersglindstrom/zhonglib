@@ -67,6 +67,8 @@ class TestDictionary(unittest.TestCase):
         self.assertEqual(1, len(result))
         self.gateway_2_checks(result[0])
         
+        # Lookup by meaning 'door'.  Should find
+        # two entries.
     def test_meaning_1_1(self):
         result = self._dictionary.find(u'gate')
         self.assertTrue(result != None)
@@ -74,6 +76,8 @@ class TestDictionary(unittest.TestCase):
         self.gateway_2_checks(result[0])
         self.gateway_1_checks(result[1])
         
+        # Lookup by meaning 'doorway'.  Should find
+        # two entries.
     def test_meaning_1_2(self):
         result = self._dictionary.find(u'doorway')
         self.assertTrue(result != None)

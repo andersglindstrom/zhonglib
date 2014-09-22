@@ -15,6 +15,6 @@ dst = sys.argv[2]
 
 if os.path.exists(dst):
     print 'Dictionary already exists.  Remove before generating.'
-    sys.exit(0)
+    sys.exit(1)
 
 zhonglib.create_dictionary(src, dst, True)
