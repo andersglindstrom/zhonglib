@@ -273,8 +273,11 @@ __standard_decomposer = CharacterDecomposer(os.path.join(
     'decomposition-data.txt'
 ))
 
-def decompose_character(character):
-    return __standard_decomposer.decompose(character)
+def decompose_character(character, flatten=True):
+    decomposition = __standard_decomposer.decompose(character)
+    if flatten:
+        decomposition = flatten_decomposition(decomposition)
+    return decomposition
 
 def flatten_one_level_down(record):
     if record_type(record) == CHARACTER:
@@ -296,3 +299,12 @@ def flatten_decomposition(record):
     for child in children:
         result += flatten_one_level_down(child)
     return result
+
+def decompose_word(word):
+    return [ch for ch in word]
+
+def decompose(text):
+    if len(text) == 1:
+        return decompose_character(text)
+    else:
+        return decompose_word(text)
