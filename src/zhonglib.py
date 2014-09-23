@@ -267,6 +267,15 @@ def standard_dictionary():
 def find(word):
     return __standard_dictionary.find(word)
 
+__standard_decomposer = CharacterDecomposer(os.path.join(
+    os.path.dirname(__file__),
+    'zhonglib-data',
+    'decomposition-data.txt'
+))
+
+def decompose_character(character):
+    return __standard_decomposer.decompose(character)
+
 def flatten_one_level_down(record):
     if record_type(record) == CHARACTER:
         return record_id(record)

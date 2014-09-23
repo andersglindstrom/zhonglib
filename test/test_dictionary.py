@@ -17,7 +17,7 @@ class TestDictionary(unittest.TestCase):
                 'test_dictionary')
         if os.path.exists(dictionary_dir):
             shutil.rmtree(dictionary_dir)
-        zl.create_dictionary(dictionary_file, dictionary_dir, True)
+        zl.create_dictionary(dictionary_file, dictionary_dir)
         self._dictionary = zl.Dictionary(dictionary_dir)
 
     def gateway_1_checks(self, result):

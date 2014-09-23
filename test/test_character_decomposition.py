@@ -72,5 +72,12 @@ class TestCharacterDecomposition(unittest.TestCase):
         self.assertEquals(['p', 'q', 'n'], zl.flatten_decomposition(self._character_u))
         self.assertEquals(['t', 'p', 'q'], zl.flatten_decomposition(self._group_2))
 
+    def test_standard_decomposer(self):
+        # This is the entire decomposition tree
+        decomposition = zl.decompose_character(u'好')
+        # This is the topmost characters in the tree.
+        flattened = zl.flatten_decomposition(decomposition)
+        self.assertEquals([u'女', u'子'], flattened)
+
 if __name__ == '__main__':
     unittest.main()
