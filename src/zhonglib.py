@@ -193,6 +193,7 @@ def create_dictionary(source, destination, english_index=True, verbose=False):
         num_lines = sum(1 for line in open(source))
         line_count = 0
     index = create_in(destination, schema)
+    writer = index.writer()
     with codecs.open(source, 'r', encoding='utf-8') as f:
         for line in f:
             if not line[0] == '#':
@@ -201,13 +202,14 @@ def create_dictionary(source, destination, english_index=True, verbose=False):
                     line_count += 1
                     pct_done = 100.0*line_count/num_lines
                     print pct_done, '% done. Added "'+trad+'"'
-                writer = index.writer()
                 writer.add_document(
                         traditional=trad,
                         simplified=simp,
                         pinyin=pin,
                         meaning=mean)
-                writer.commit()
+    if verbose:
+        print "Committing. Can be slow."
+    writer.commit()
 
 from whoosh.query import Term
 

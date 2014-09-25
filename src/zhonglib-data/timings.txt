@@ -1,0 +1,2 @@
+To create small dictionary: 2m29s
+To create full dictionary: 3m35s
