@@ -208,7 +208,7 @@ def create_dictionary(source, destination, english_index=True, verbose=False):
                         pinyin=pin,
                         meaning=mean)
     if verbose:
-        print "Committing. Can be slow."
+        print "Committing. This may take a couple of minutes."
     writer.commit()
 
 from whoosh.query import Term
