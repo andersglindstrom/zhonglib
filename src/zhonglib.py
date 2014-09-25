@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import os.path
+import functools
+import operator
 import codecs
 
 # Constants
@@ -170,13 +172,19 @@ def parse_dictionary_line(line):
 
 # Given a file in the CC-CEDICT format, this function creates a Whoosh
 # index that is used later for searching
-def create_dictionary(source, destination, verbose=False):
+def create_dictionary(source, destination, english_index=True, verbose=False):
     # Use ID field for Chinese words because they are already tokenized.
     # Using TEXT doesn't work properly because single letter words are ignored.
+
+    if english_index:
+        meaning_field = TEXT(stored=True)
+    else:
+        meaning_field = STORED()
+
     schema = Schema(traditional=ID(stored=True),
                     simplified=ID(stored=True),
                     pinyin=TEXT(stored=True),
-                    meaning=TEXT(stored=True))
+                    meaning=meaning_field)
     if os.path.exists(destination):
         msg = "Dictionary already exists: " + destination
         raise RuntimeError(msg)
@@ -255,11 +263,14 @@ class Dictionary:
                 ));
             return return_value
 
-__standard_dictionary = Dictionary(os.path.join(
+__standard_dictionary_path = os.path.join(
     os.path.dirname(__file__),
     'zhonglib-data',
     'dictionary'
-))
+)
+
+if os.path.exists(__standard_dictionary_path):
+    __standard_dictionary = Dictionary(os.path.join(__standard_dictionary_path))
 
 def standard_dictionary():
     return __standard_dictionary
@@ -273,13 +284,13 @@ __standard_decomposer = CharacterDecomposer(os.path.join(
     'decomposition-data.txt'
 ))
 
-def decompose_character(character, flatten=True):
+def decompose_character(character, flatten=True, stopAtStrokes=True):
     decomposition = __standard_decomposer.decompose(character)
     if flatten:
-        decomposition = flatten_decomposition(decomposition)
+        decomposition = flatten_decomposition(decomposition, stopAtStrokes)
     return decomposition
 
-def flatten_one_level_down(record):
+def flatten_one_level_down(record, stopAtStrokes=True):
     if record_type(record) == CHARACTER:
         return record_id(record)
     assert record_type(record) == GROUP
@@ -289,22 +300,30 @@ def flatten_one_level_down(record):
         result += flatten_one_level_down(child)
     return result
 
-def flatten_decomposition(record):
+def any_are_strokes(characters):
+    for c in characters:
+        if is_unicode_stroke(c):
+            return True
+    return False
+
+def flatten_decomposition(record, stopAtStrokes=True):
     if record_type(record) == CHARACTER and record_referent(record) == None:
-        return list(record_id(record))
+        return []
     if record_type(record) == CHARACTER and record_relation_type(record) == VARIANT_OF:
-        return flatten_decomposition(record_referent(record))
+        return list(flatten_one_level_down(record_referent(record)))
     children = record_referent(record)
     result = []
     for child in children:
         result += flatten_one_level_down(child)
+    if len(result) > 0 and stopAtStrokes and any_are_strokes(result):
+        result = []
     return result
 
 def decompose_word(word):
     return [ch for ch in word]
 
-def decompose(text):
+def decompose(text, stopAtStrokes=True):
     if len(text) == 1:
-        return decompose_character(text)
+        return decompose_character(text, stopAtStrokes)
     else:
         return decompose_word(text)

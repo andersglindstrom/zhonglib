@@ -65,24 +65,33 @@ class TestCharacterDecomposition(unittest.TestCase):
         self.assertEqual(self._character_hao, self.decompose(u'好'))
 
     def test_flatten_decomposition(self):
-        self.assertEquals(['m'], zl.flatten_decomposition(self._character_m))
+        self.assertEquals([], zl.flatten_decomposition(self._character_m))
         self.assertEquals(['m', 'n', 'p'], zl.flatten_decomposition(self._character_r))
         self.assertEquals(['p', 'q'], zl.flatten_decomposition(self._group_1))
         self.assertEquals(['p', 'q', 'n'], zl.flatten_decomposition(self._character_t))
-        self.assertEquals(['p', 'q', 'n'], zl.flatten_decomposition(self._character_u))
+        self.assertEquals(['t'], zl.flatten_decomposition(self._character_u))
         self.assertEquals(['t', 'p', 'q'], zl.flatten_decomposition(self._group_2))
 
-    def test_standard_decomposer(self):
+    def test_standard_decomposer_1(self):
         decomposition = zl.decompose_character(u'好', flatten=True)
         self.assertEquals([u'女', u'子'], decomposition)
 
-    def test_decompose_word_1(self):
-        decomposition = zl.decompose_word(u'好')
-        self.assertEquals([u'好'], decomposition)
+    def test_standard_decomposer_2(self):
+        # Should ignore strokes
+        decomposition = zl.decompose_character(u'几', flatten=True, stopAtStrokes=True)
+        self.assertEquals([], decomposition)
 
-    def test_decompose_word_2(self):
-        decomposition = zl.decompose_word(u'本子')
-        self.assertEquals([u'本', u'子'], decomposition)
+        decomposition = zl.decompose_character(u'几', flatten=True, stopAtStrokes=False)
+        self.assertEquals([u'㇓', u'㇠'], decomposition)
+
+    def test_standard_decomposer_3(self):
+        # Should ignore strokes
+        decomposition = zl.decompose_character(u'子', flatten=True, stopAtStrokes=True)
+        self.assertEquals([], decomposition)
+
+        decomposition = zl.decompose_character(u'子', flatten=True, stopAtStrokes=False)
+        # The second character below is, in fact, a stroke and not 'yi'
+        self.assertEquals([u'了', u'㇐'], decomposition)
 
 if __name__ == '__main__':
     unittest.main()
