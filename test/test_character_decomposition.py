@@ -34,7 +34,7 @@ class TestCharacterDecomposition(unittest.TestCase):
         return self._decomposer.decompose(ch)
 
     def test_none(self):
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(zl.ZhonglibException):
             self.decompose(None)
 
     def test_level_zero(self):

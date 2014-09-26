@@ -37,6 +37,14 @@ def record_relation_type(record):
 def record_referent(record):
     return record[3]
 
+class ZhonglibException(Exception):
+
+    def __init__(self, message):
+        self.message = message
+
+    def __str__(self):
+        return message
+
 class CharacterDecomposer:
 
     def __init__(self, file_name):
@@ -96,7 +104,7 @@ class CharacterDecomposer:
     def _load_decomposition_data(self):
         if not os.path.exists(self._file_name):
             msg = "Decomposition data file does not exist: " + self._file_name
-            raise RuntimeError(msg)
+            raise ZhonglibException(msg)
 
         with codecs.open(self._file_name, 'r', encoding='utf-8') as f:
             for line in f:
@@ -109,7 +117,7 @@ class CharacterDecomposer:
     def decompose(self, ch):
         try:
             record = self._decomp_table[ch]
-        except KeyError: raise RuntimeError('No decomposition data for ' + repr(ch))
+        except KeyError: raise ZhonglibException('No decomposition data for ' + repr(ch))
 
         relation_type = record_relation_type(record)
         if relation_type == COMPOSED_OF:
@@ -187,7 +195,7 @@ def create_dictionary(source, destination, english_index=True, verbose=False):
                     meaning=meaning_field)
     if os.path.exists(destination):
         msg = "Dictionary already exists: " + destination
-        raise RuntimeError(msg)
+        raise ZhonglibException(msg)
     os.mkdir(destination)
     if verbose:
         num_lines = sum(1 for line in open(source))
