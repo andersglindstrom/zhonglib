@@ -393,3 +393,6 @@ def decompose(text, stopAtStrokes=True):
         return decompose_character(text, stopAtStrokes)
     else:
         return decompose_word(text)
+
+def extract_cjk(text):
+    return text, ()
