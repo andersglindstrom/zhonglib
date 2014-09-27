@@ -395,4 +395,25 @@ def decompose(text, stopAtStrokes=True):
         return decompose_word(text)
 
 def extract_cjk(text):
-    return text, ()
+    state = 1
+    idx = 0
+    pattern = ''
+    words = []
+    while idx < len(text):
+        ch = text[idx]
+        idx += 1
+        if state == 1:
+            if is_cjk_character(ch):
+                word = ch
+                state = 2
+                pattern += '%s'
+            else:
+                pattern += ch
+        elif state == 2:
+            if is_cjk_character(ch):
+                word += ch
+            else:
+                words.append(word)
+                pattern += ch
+                state = 1
+    return pattern, tuple(words)
