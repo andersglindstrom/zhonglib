@@ -10,7 +10,7 @@ class TestCharacterClassification(unittest.TestCase):
         self.assertFalse(zl.is_unified_character(unichr(0x4E00-1)))
         self.assertTrue(zl.is_unified_character(unichr(0x4E00)))
         self.assertTrue(zl.is_unified_character(unichr(0x9FFF)))
-        self.assertFalse(zh.is_unified_character(unichr(0x9FFF+1)))
+        self.assertFalse(zl.is_unified_character(unichr(0x9FFF+1)))
 
     def test_is_unified_extension_A_character(self):
         self.assertFalse(zl.is_unified_extension_A_character(unichr(0x3400-1)))
@@ -90,7 +90,7 @@ class TestCharacterClassification(unittest.TestCase):
         self.assertTrue(zl.is_compatibility_ideograph_supplement(unichr(0x2FA1F)))
         self.assertFalse(zl.is_compatibility_ideograph_supplement(unichr(0x2FA1F+1)))
 
-    def test_is_unified_character(self):
+    def test_is_cjk_character(self):
         pass
 
     def test_is_radical(self):

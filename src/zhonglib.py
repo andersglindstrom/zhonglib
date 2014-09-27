@@ -195,6 +195,23 @@ def is_compatibility_form(ch):
 def is_compatibility_ideograph_supplement(ch):
     return unichr(0x2F800) <= ch and ch <= unichr(0x2FA1F)
 
+def is_cjk_character(ch):
+    return is_unified_character(ch)\
+        or is_unified_extension_A_character(ch)\
+        or is_unified_extension_B_character(ch)\
+        or is_unified_extension_C_character(ch)\
+        or is_unified_extension_D_character(ch)\
+        or is_supplemental_radical(ch)\
+        or is_kangxi_radical(ch)\
+        or is_description_character(ch)\
+        or is_symobl_or_punctuation(ch)\
+        or is_stroke(ch)\
+        or is_enclosed_letter_or_month(ch)\
+        or is_compatibility_character(ch)\
+        or is_compatibility_ideograph(ch)\
+        or is_compatibility_form(ch)\
+        or is_compatibility_ideograph_supplement(ch)
+
 def is_radical(ch):
     return is_kangxi_radical(ch) or is_supplemental_radical(ch)
 
