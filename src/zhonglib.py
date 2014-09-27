@@ -145,19 +145,58 @@ class CharacterDecomposer:
     def __str__(self):
         return str(self._decomp_table)
 
-def is_unicode_kangxi_radical(ch):
+# For all the following classifications, see the following overview page:
+#http://en.wikipedia.org/wiki/Han_unification
+
+def is_unified_character(ch):
+    return unichr(0x4E00) <= ch and ch <= unichr(0x9FFF)
+
+def is_unified_extension_A_character(ch):
+    return unichr(0x3400) <= ch and ch <= unichr(0x4DBF)
+
+def is_unified_extension_B_character(ch):
+    return unichr(0x20000) <= ch and ch <= unichr(0x2A6DF)
+
+def is_unified_extension_C_character(ch):
+    return unichr(0x2A700) <= ch and ch <= unichr(0x2B73F)
+
+def is_unified_extension_D_character(ch):
+    return unichr(0x2B740) <= ch and ch <= unichr(0x2B73F)
+
+def is_supplemental_radical(ch):
+    # See http://en.wikipedia.org/wiki/CJK_Radicals_Supplement
+    return unichr(0x2E80) <= ch and ch <= unichr(0x2EFF)
+
+def is_kangxi_radical(ch):
     # See http://en.wikipedia.org/wiki/Kangxi_Radicals#Unicode
-    return u'⼀' <= ch and ch <= u'⿕'
+    return unichr(0x2F00) <= ch and ch <= unichr(0x2FDF) 
 
-def is_unicode_supplemental_radical(ch):
-    # See ttp://en.wikipedia.org/wiki/CJK_Radicals_Supplement
-    return u'⺀' <= ch and ch <= u'⻳' 
+def is_description_character(ch):
+    return unichr(0x2FF0) <= ch and ch <= unichr(0x2FFF)
 
-def is_unicode_radical(ch):
-    return is_unicode_kangxi_radical(ch) or is_unicode_supplemental_radical(ch)
+def is_symobl_or_punctuation(ch):
+    return unichr(0x3000) <= ch and ch <= unichr(0x303F)
 
-def is_unicode_stroke(ch):
-    return u'㇀' <= ch and ch <= u'㇣'
+def is_stroke(ch):
+    return unichr(0x31C0) <= ch and ch <= unichr(0x31E3)
+
+def is_enclosed_letter_or_month(ch):
+    return unichr(0x3200) and ch <= unichr(0x32FF)
+
+def is_compatibility_character(ch):
+    return unichr(0x3300) and ch <= unichr(0x33FF)
+
+def is_compatibility_ideograph(ch):
+    return unichr(0xF900) and ch <= unichr(0xFAFF)
+
+def is_compatibility_form(ch):
+    return unichr(0xFE30) and ch <= unichr(0xFE4F)
+
+def is_compatibility_ideograph_supplement(ch):
+    return unichr(0x2F800) and ch <= unichr(0x2FA1F)
+
+def is_radical(ch):
+    return is_kangxi_radical(ch) or is_supplemental_radical(ch)
 
 import whoosh.analysis
 from whoosh.index import create_in, open_dir
@@ -312,7 +351,7 @@ def flatten_one_level_down(record, stopAtStrokes=True):
 
 def any_are_strokes(characters):
     for c in characters:
-        if is_unicode_stroke(c):
+        if is_stroke(c):
             return True
     return False
 
