@@ -161,7 +161,7 @@ def is_unified_extension_C_character(ch):
     return unichr(0x2A700) <= ch and ch <= unichr(0x2B73F)
 
 def is_unified_extension_D_character(ch):
-    return unichr(0x2B740) <= ch and ch <= unichr(0x2B73F)
+    return unichr(0x2B740) <= ch and ch <= unichr(0x2B81F)
 
 def is_supplemental_radical(ch):
     # See http://en.wikipedia.org/wiki/CJK_Radicals_Supplement
@@ -178,22 +178,22 @@ def is_symobl_or_punctuation(ch):
     return unichr(0x3000) <= ch and ch <= unichr(0x303F)
 
 def is_stroke(ch):
-    return unichr(0x31C0) <= ch and ch <= unichr(0x31E3)
+    return unichr(0x31C0) <= ch and ch <= unichr(0x31EF)
 
 def is_enclosed_letter_or_month(ch):
-    return unichr(0x3200) and ch <= unichr(0x32FF)
+    return unichr(0x3200) <= ch and ch <= unichr(0x32FF)
 
 def is_compatibility_character(ch):
-    return unichr(0x3300) and ch <= unichr(0x33FF)
+    return unichr(0x3300) <= ch and ch <= unichr(0x33FF)
 
 def is_compatibility_ideograph(ch):
-    return unichr(0xF900) and ch <= unichr(0xFAFF)
+    return unichr(0xF900) <= ch and ch <= unichr(0xFAFF)
 
 def is_compatibility_form(ch):
-    return unichr(0xFE30) and ch <= unichr(0xFE4F)
+    return unichr(0xFE30) <= ch and ch <= unichr(0xFE4F)
 
 def is_compatibility_ideograph_supplement(ch):
-    return unichr(0x2F800) and ch <= unichr(0x2FA1F)
+    return unichr(0x2F800) <= ch and ch <= unichr(0x2FA1F)
 
 def is_radical(ch):
     return is_kangxi_radical(ch) or is_supplemental_radical(ch)
