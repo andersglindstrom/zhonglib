@@ -399,18 +399,25 @@ def extract_cjk(text):
     idx = 0
     pattern = ''
     words = []
-    while idx < len(text):
-        ch = text[idx]
+    while idx <= len(text):
+        if idx < len(text):
+            ch = text[idx]
+        else:
+            ch = None
         idx += 1
         if state == 1:
-            if is_cjk_character(ch):
+            if ch == None:  # We've finished processing the text.
+                pass
+            elif is_cjk_character(ch):
                 word = ch
                 state = 2
                 pattern += '%s'
             else:
                 pattern += ch
         elif state == 2:
-            if is_cjk_character(ch):
+            if ch == None:  # We've finished processing the text.
+                words.append(word)
+            elif is_cjk_character(ch):
                 word += ch
             else:
                 words.append(word)
