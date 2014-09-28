@@ -509,26 +509,27 @@ def format_pinyin(syllable, tone):
                 o_idx = idx
         idx += 1
 
-    # Part 2
+    # Part 2. Calculate the vowel to get the tone
     if vowel_count == 1:
         # Vowel must be first letter of final part
-        result = initial + _tone_table[final[0]][tone] + final[1:]
+        vowel_idx = len(initial)
     else:
         # In the following, the idx could point to either a lower or upper
-        # case letter.
+        # case character so we have to use that character rather than a
+        # literal.
         if a_idx != None:
-            vowel = _tone_table[syllable[a_idx]][tone]
             vowel_idx = a_idx
         elif e_idx != None:
-            vowel = _tone_table[syllable[e_idx]][tone]
             vowel_idx = e_idx
         elif o_idx != None:
-            vowel = _tone_table[syllable[o_idx]][tone]
             vowel_idx = o_idx
         else:
             # Otherwise, second vowel takes the mark
             # The second vowel must be the second letter of the final part.
-            vowel = _tone_table[final[1]][tone]
             vowel_idx = len(initial)+1
-        result = syllable[0:vowel_idx] + vowel + syllable[vowel_idx+1:]
-    return result
+
+    # Lood up the toned vowel
+    toned_vowel = _tone_table[syllable[vowel_idx]][tone]
+
+    # Put it all together again
+    return syllable[0:vowel_idx] + toned_vowel + syllable[vowel_idx+1:]
