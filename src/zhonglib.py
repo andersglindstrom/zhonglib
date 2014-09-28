@@ -478,6 +478,15 @@ def format_pinyin(syllable, tone):
     e_idx = None
     o_idx = None
 
+    # In the first part, extract the initial and final parts of the
+    # syllable.  Also, keep track of where various vowels are located
+    # and the total vowel count.
+    #
+    # In the second part, these are used to apply formatting rule as
+    # specified on the wiki page above. The version preceded by 'Worded
+    # differently,' is used.
+
+    # Part 1
     idx = 0
     while idx < len(syllable): 
         ch = syllable[idx]
@@ -492,37 +501,34 @@ def format_pinyin(syllable, tone):
             final += ch
             if is_vowel(ch):
                 vowel_count += 1
-            if ch == 'a':
+            if ch == 'a' or ch == 'A':
                 a_idx = idx
-            if ch == 'e':
+            if ch == 'e' or ch == 'E':
                 e_idx = idx
-            if ch == 'o':
+            if ch == 'o' or ch == 'O':
                 o_idx = idx
         idx += 1
 
+    # Part 2
     if vowel_count == 1:
         # Vowel must be first letter of final part
         result = initial + _tone_table[final[0]][tone] + final[1:]
     else:
-        print 'a_idx=%s'%a_idx
-        print 'e_idx=%s'%e_idx
-        print 'o_idx=%s'%o_idx
+        # In the following, the idx could point to either a lower or upper
+        # case letter.
         if a_idx != None:
-            vowel = _tone_table['a'][tone]
+            vowel = _tone_table[syllable[a_idx]][tone]
             vowel_idx = a_idx
         elif e_idx != None:
-            vowel = _tone_table['e'][tone]
+            vowel = _tone_table[syllable[e_idx]][tone]
             vowel_idx = e_idx
         elif o_idx != None:
-            vowel = _tone_table['o'][tone]
+            vowel = _tone_table[syllable[o_idx]][tone]
             vowel_idx = o_idx
         else:
+            # Otherwise, second vowel takes the mark
+            # The second vowel must be the second letter of the final part.
             vowel = _tone_table[final[1]][tone]
-            vowel_idx = 1
-        print 'vowel_idx:%s'%vowel_idx
-        part_1 = syllable[0:vowel_idx]
-        part_2 = vowel
-        part_3 = syllable[vowel_idx+1:]
-        print 'part_1:%s part_2:%s part_3:%s'%(part_1,part_2,part_3)
-        result = part_1+part_2+part_3
+            vowel_idx = len(initial)+1
+        result = syllable[0:vowel_idx] + vowel + syllable[vowel_idx+1:]
     return result
