@@ -432,7 +432,7 @@ def _parse_one_cedict_pinyin(text):
     else:
         syllable = text
         tone = 0
-    syllable = syllable.replace('u:','ü').replace('U:','Ü') 
+    syllable = syllable.replace(u'u:',u'ü').replace(u'U:',u'Ü') 
     return (syllable, tone)
 
 def parse_cedict_pinyin(text):

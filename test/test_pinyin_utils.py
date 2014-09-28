@@ -6,28 +6,28 @@ import zhonglib as zl
 class TestPinyinUtils(unittest.TestCase):
 
     def test_parse_numbered_pinyin_1(self):
-        pinyin_tuples = zl.parse_cedict_pinyin('[tang1]')
-        self.assertEqual(('tang', 1), pinyin_tuples[0])
+        pinyin_tuples = zl.parse_cedict_pinyin(u'[tang1]')
+        self.assertEqual((u'tang', 1), pinyin_tuples[0])
 
     def test_parse_numbered_pinyin_2(self):
-        pinyin_tuples = zl.parse_cedict_pinyin('[hen3 hao4]')
-        self.assertEqual(('hen', 3), pinyin_tuples[0])
-        self.assertEqual(('hao', 4), pinyin_tuples[1])
+        pinyin_tuples = zl.parse_cedict_pinyin(u'[hen3 hao4]')
+        self.assertEqual((u'hen', 3), pinyin_tuples[0])
+        self.assertEqual((u'hao', 4), pinyin_tuples[1])
 
     def test_parse_numbered_pinyin_3(self):
-        pinyin_tuples = zl.parse_cedict_pinyin('[hen1 hao]')
-        self.assertEqual(('hen', 1), pinyin_tuples[0])
-        self.assertEqual(('hao', 0), pinyin_tuples[1])
+        pinyin_tuples = zl.parse_cedict_pinyin(u'[hen1 hao]')
+        self.assertEqual((u'hen', 1), pinyin_tuples[0])
+        self.assertEqual((u'hao', 0), pinyin_tuples[1])
 
     def test_parse_numbered_pinyin_4(self):
-        pinyin_tuples = zl.parse_cedict_pinyin('[lu:3 guan3]')
-        self.assertEqual(('lü', 3), pinyin_tuples[0])
-        self.assertEqual(('guan', 3), pinyin_tuples[1])
+        pinyin_tuples = zl.parse_cedict_pinyin(u'[lu:3 guan3]')
+        self.assertEqual((u'lü', 3), pinyin_tuples[0])
+        self.assertEqual((u'guan', 3), pinyin_tuples[1])
 
     def test_parse_numbered_pinyin_5(self):
-        pinyin_tuples = zl.parse_cedict_pinyin('[lU:3 guan3]')
-        self.assertEqual(('lÜ', 3), pinyin_tuples[0])
-        self.assertEqual(('guan', 3), pinyin_tuples[1])
+        pinyin_tuples = zl.parse_cedict_pinyin(u'[lU:3 guan3]')
+        self.assertEqual((u'lÜ', 3), pinyin_tuples[0])
+        self.assertEqual((u'guan', 3), pinyin_tuples[1])
 
     def test_format_pinyin_1(self):
         self.assertEqual(u'a', zl.format_pinyin(u'a', 0))
