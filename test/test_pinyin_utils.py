@@ -140,3 +140,6 @@ class TestPinyinUtils(unittest.TestCase):
         self.assertEqual(u'shuái', zl.format_pinyin(u'shuai', 2))
         self.assertEqual(u'shuǎi', zl.format_pinyin(u'shuai', 3))
         self.assertEqual(u'shuài', zl.format_pinyin(u'shuai', 4))
+
+    def test_format_pinyin_list(self):
+        self.assertEqual(u'rŌushuāi', zl.format_pinyin_sequence([(u'rOu', 1),(u'shuai', 1)]))

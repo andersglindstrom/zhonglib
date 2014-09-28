@@ -533,3 +533,9 @@ def format_pinyin(syllable, tone):
 
     # Put it all together again
     return syllable[0:vowel_idx] + toned_vowel + syllable[vowel_idx+1:]
+
+def format_pinyin_sequence(tuples):
+    result = u''
+    for t in tuples:
+        result += format_pinyin(t[0], t[1])
+    return result
