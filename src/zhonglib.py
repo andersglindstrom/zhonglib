@@ -405,7 +405,7 @@ def extract_cjk(text):
         else:
             ch = None
         idx += 1
-        if state == 1:
+        if state == 1:  # Non CJK characters
             if ch == None:  # We've finished processing the text.
                 pass
             elif is_cjk_character(ch):
@@ -414,7 +414,7 @@ def extract_cjk(text):
                 pattern += '%s'
             else:
                 pattern += ch
-        elif state == 2:
+        elif state == 2:    # CJK characters
             if ch == None:  # We've finished processing the text.
                 words.append(word)
             elif is_cjk_character(ch):
@@ -427,11 +427,72 @@ def extract_cjk(text):
 
 def _parse_one_cedict_pinyin(text):
     if text[-1].isdigit():
-        return (text[0:-1], int(text[-1]))
-    return (text,0)
+        syllable = text[0:-1]
+        tone = int(text[-1])
+    else:
+        syllable = text
+        tone = 0
+    syllable = syllable.replace('u:','ü').replace('U:','Ü') 
+    return (syllable, tone)
 
 def parse_cedict_pinyin(text):
     if text[0] != '[' or text[-1] != ']':
         raise ZhonglibException(text + ' is not in CEDICT pinyin format.')
     elements = text[1:-1].split(' ')
     return map(_parse_one_cedict_pinyin, elements)
+
+# Pinyin vowels are ordered (a,o,e,i,u,ü). It's not significant for this code.
+_vowels = frozenset({'a','o','e','i','u',u'ü','A','O','E','I','U',u'Ü'})
+
+
+_tone_table = {
+    u'a':(u'a',u'ā',u'á',u'ǎ',u'à'),
+#    'o':('o','ō','ó','ǒ','ò'),
+#    'e':('e','ē','é','ě','è'),
+#    'i':('i','ī','í','ǐ','ì'),
+#    'u':('u','ū','ú','ǔ','ù'),
+    u'ü':(u'ü',u'ǖ',u'ǘ',u'ǚ',u'ǜ'),
+#    'A':('A','Ā','Á','Ǎ','À'),
+#    'O':('O','Ō','Ó','Ǒ','Ò'),
+#    'E':('E','Ē','É','Ě','È'),
+#    'I':('I','Ī','Í','Ǐ','Ì'),
+#    'U':('U','Ū','Ú','Ǔ','Ù'),
+#    'Ü':('U','Ǖ','Ǘ','Ǚ','Ǜ')
+}
+
+def is_vowel(ch):
+    return ch in _vowels
+
+def format_pinyin(syllable, tone):
+    result = u''
+    final = u''
+
+    state = 1
+    vowel_count = 0
+
+    idx = 0
+    for ch in syllable:
+        print 'AA'
+        if state == 1:  # Getting the initial
+            print 'BB'
+            if not is_vowel(ch):
+                print 'CC'
+                result += ch
+            else:
+                print 'DD'
+                final += ch
+                vowel_count += 1
+                state = 2
+        elif state == 2:  # Getting the final
+            print 'EE'
+            final += ch
+            if is_vowel(ch):
+                print 'FF'
+                vowel_count += 1
+    print 'result: "%s"'%result
+    print 'final: "%s"'%final
+    if vowel_count == 1:
+        vowel = final[0]
+        result += _tone_table[vowel][tone]
+        result += final[1:]
+    return result
