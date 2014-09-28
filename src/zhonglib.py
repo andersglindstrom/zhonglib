@@ -447,17 +447,17 @@ _vowels = frozenset({'a','o','e','i','u',u'ü','A','O','E','I','U',u'Ü'})
 
 _tone_table = {
     u'a':(u'a',u'ā',u'á',u'ǎ',u'à'),
-#    'o':('o','ō','ó','ǒ','ò'),
-#    'e':('e','ē','é','ě','è'),
-#    'i':('i','ī','í','ǐ','ì'),
-#    'u':('u','ū','ú','ǔ','ù'),
+    u'o':(u'o',u'ō',u'ó',u'ǒ',u'ò'),
+    u'e':(u'e',u'ē',u'é',u'ě',u'è'),
+    u'i':(u'i',u'ī',u'í',u'ǐ',u'ì'),
+    u'u':(u'u',u'ū',u'ú',u'ǔ',u'ù'),
     u'ü':(u'ü',u'ǖ',u'ǘ',u'ǚ',u'ǜ'),
-#    'A':('A','Ā','Á','Ǎ','À'),
-#    'O':('O','Ō','Ó','Ǒ','Ò'),
-#    'E':('E','Ē','É','Ě','È'),
-#    'I':('I','Ī','Í','Ǐ','Ì'),
-#    'U':('U','Ū','Ú','Ǔ','Ù'),
-#    'Ü':('U','Ǖ','Ǘ','Ǚ','Ǜ')
+    u'A':(u'A',u'Ā',u'Á',u'Ǎ',u'À'),
+    u'O':(u'O',u'Ō',u'Ó',u'Ǒ',u'Ò'),
+    u'E':(u'E',u'Ē',u'É',u'Ě',u'È'),
+    u'I':(u'I',u'Ī',u'Í',u'Ǐ',u'Ì'),
+    u'U':(u'U',u'Ū',u'Ú',u'Ǔ',u'Ù'),
+    u'Ü':(u'U',u'Ǖ',u'Ǘ',u'Ǚ',u'Ǜ')
 }
 
 def is_vowel(ch):
@@ -472,14 +472,10 @@ def format_pinyin(syllable, tone):
 
     idx = 0
     for ch in syllable:
-        print 'AA'
         if state == 1:  # Getting the initial
-            print 'BB'
             if not is_vowel(ch):
-                print 'CC'
                 result += ch
             else:
-                print 'DD'
                 final += ch
                 vowel_count += 1
                 state = 2
