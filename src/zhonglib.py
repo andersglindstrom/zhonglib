@@ -424,3 +424,14 @@ def extract_cjk(text):
                 pattern += ch
                 state = 1
     return pattern, tuple(words)
+
+def _parse_one_cedict_pinyin(text):
+    if text[-1].isdigit():
+        return (text[0:-1], int(text[-1]))
+    return (text,0)
+
+def parse_cedict_pinyin(text):
+    if text[0] != '[' or text[-1] != ']':
+        raise ZhonglibException(text + ' is not in CEDICT pinyin format.')
+    elements = text[1:-1].split(' ')
+    return map(_parse_one_cedict_pinyin, elements)
