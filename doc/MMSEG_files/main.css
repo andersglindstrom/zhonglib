@@ -1,0 +1,218 @@
+A {
+	text-decoration : underline;
+}
+
+A:link {
+	color : blue;
+	background-color : transparent;
+}
+
+A:visited {
+	color : purple;
+	background-color : transparent;
+}
+
+A:hover {
+	background-color: #4682B4;
+	color: White;
+	text-decoration: none;
+}
+
+A:active {
+	color : red;
+	background-color : inherit;
+}
+
+body {
+	color: black;
+	background-color: #70808F;
+	font-family: "Arial", "Helvetica", "Verdana", sans-serif;
+}
+
+h1 {
+	margin-right : 20%;
+	margin-bottom: 0.25em;
+	font-family : inherit;
+}
+
+h2 {
+	margin-right : 20%;
+	font-family : inherit;
+}
+
+h3 {
+	margin-right : 20%;
+	font-family : inherit;
+}
+
+h3.related {
+	color : #A52A2A;
+	background-color : transparent;
+	font-size : smaller;
+	line-height : 1.25;
+}
+
+h4 {
+	margin-right : 20%;
+	font-family : inherit;
+}
+
+code {
+	font-family : "Courier New", "Courier", monospace;	
+}
+
+p {
+	font-family: inherit;
+	font-size: 1em;
+	line-height: 1.25em;	
+}
+
+p.timestamp {
+	font-family: "Verdana", "Arial", "Helvetica", sans-serif;
+	font-size: smaller;
+	margin: 0%;
+	color: #696969;
+	line-height: 1.25em;
+}
+
+p.copyright {
+	font-family: "Verdana", "Arial", "Helvetica", sans-serif;
+	font-size: smaller;
+	margin: 0%;
+	line-height: 1.75em;
+}
+
+p.license {
+	font-family: "Verdana", "Arial", "Helvetica", sans-serif;
+	font-size: smaller;
+	margin: 0%;
+	line-height: 1.75em;
+}
+
+p.version {
+	font-family: "Verdana", "Arial", "Helvetica", sans-serif;
+	font-size: smaller;
+	margin: 0%;
+	line-height: 1.75em;
+}
+
+p.related {
+	font-family: "Verdana", "Arial", "Helvetica", sans-serif;
+	font-size : smaller;
+	line-height : 1.10em;
+}
+
+p.ref {
+   margin-top: 0em;
+	margin-bottom: 0.5em;
+	line-height : 1.25em;
+}
+
+ul {
+	font-family: inherit;
+	font-family: "Arial", "Helvetica", "Verdana", sans-serif;
+}
+
+li {
+	font-family: inherit;
+	font-family: "Arial", "Helvetica", "Verdana", sans-serif;
+}
+
+table {
+	margin-bottom: 3%;
+	margin-left: 5%;
+}
+
+caption {
+	font-weight: bolder;
+}
+
+pre {
+	width : 100%;
+	font-family : "Courier New", "Courier", monospace;
+	font-size : 90%;
+	height : auto;
+}
+
+div.navigation {
+	margin-left: 10%;
+	margin-right: 10%;
+	margin-top: 1%;
+	margin-bottom: 0%;
+	padding: 0.5em;
+	border-bottom: 2px solid #70808F;
+	background-color: #E6E6FA;
+	color: black;
+	font-family: inherit;
+}
+
+div.main {
+	margin-left: 10%;
+	margin-right: 10%;
+	margin-top: 0%;
+	margin-bottom: 2%;
+	padding-left: 2em;
+	padding-right: 2em;
+	padding-top: 1em;
+	padding-bottom: 1em;
+	background-color: #F5F5F5;
+	color: black;
+	font-family: inherit;
+}
+
+div.rightbox {
+	float: right;
+	width: 30%;
+	border: 1px solid #2E8B57;
+	padding: 1em;
+	background-color: #F0F7FF;
+	margin-top: 4.5em;
+	margin-left: 1em;
+	margin-bottom: 1em;
+}
+
+div.code {
+	margin-bottom: 3%;
+	margin-left: 5%;
+	padding-top: 1em;
+	padding-bottom: 1em;
+	padding-left: 1em;
+	padding-right: 1em;
+	border: thin solid #70808F;
+	color: #2F4F4F;
+	background-color: White;
+	overflow: auto;
+}
+
+table.style1 {
+	display: table;
+	text-align: center;
+   margin: 1em;
+	border: none;	
+	border-collapse: collapse;
+}
+
+table.style1 th {
+	display: table-cell;
+	width: 2.8em;
+	padding: 0.1em;
+	border-bottom: 1px solid #2F4F4F;
+}
+
+table.style1 td {
+	display: table-cell;
+	width: 2.8em;
+	padding: 0.1em;
+	border-top: 1px solid #DCDCDC;
+}
+
+table.style1 td.rank, table.style1 th.rank {
+	color: #8B4513;
+	background-color: #F5F5DC;
+	font-weight: bold;
+}
+
+table.style1 td.year, table.style1 th.year {
+	color: #131D8A;
+	background-color: #DCE8F5;
+}
