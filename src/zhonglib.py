@@ -429,6 +429,8 @@ def _parse_one_cedict_pinyin(text):
     if text[-1].isdigit():
         syllable = text[0:-1]
         tone = int(text[-1])
+        if tone == 5:
+            tone = 0
     else:
         syllable = text
         tone = 0

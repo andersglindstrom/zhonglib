@@ -15,7 +15,7 @@ class TestPinyinUtils(unittest.TestCase):
         self.assertEqual((u'hao', 4), pinyin_tuples[1])
 
     def test_parse_numbered_pinyin_3(self):
-        pinyin_tuples = zl.parse_cedict_pinyin(u'[hen1 hao]')
+        pinyin_tuples = zl.parse_cedict_pinyin(u'[hen1 hao5]')
         self.assertEqual((u'hen', 1), pinyin_tuples[0])
         self.assertEqual((u'hao', 0), pinyin_tuples[1])
 
