@@ -13,5 +13,10 @@ class TestDecomposition(unittest.TestCase):
         decomposition = zl.decompose(u'本子')
         self.assertEquals([u'本', u'子'], decomposition)
 
+    def test_decompose_word_3(self):
+        # Whitespace ignored
+        decomposition = zl.decompose(u'本  子')
+        self.assertEquals([u'本', u'子'], decomposition)
+
 if __name__ == '__main__':
     unittest.main()

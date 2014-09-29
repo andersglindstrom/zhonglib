@@ -386,7 +386,11 @@ def flatten_decomposition(record, stopAtStrokes=True):
     return result
 
 def decompose_word(word):
-    return [ch for ch in word]
+    result = []
+    for ch in word:
+        if is_cjk_character(ch):
+            result += ch
+    return result
 
 def decompose(text, stopAtStrokes=True):
     if len(text) == 1:
