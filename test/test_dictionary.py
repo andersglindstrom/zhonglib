@@ -85,5 +85,12 @@ class TestDictionary(unittest.TestCase):
         self.gateway_2_checks(result[0])
         self.gateway_1_checks(result[1])
 
+    def test_contains(self):
+        self.assertTrue(u'門' in self._dictionary)
+        self.assertTrue(u'門口' in self._dictionary)
+        self.assertTrue(u'门' in self._dictionary)
+        self.assertTrue(u'门口' in self._dictionary)
+        self.assertFalse('Hello' in self._dictionary)
+
 if __name__ == '__main__':
     unittest.main()

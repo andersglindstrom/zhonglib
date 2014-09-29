@@ -316,8 +316,8 @@ class Dictionary:
     def find(self, search_string):
         with self._index.searcher() as searcher:
             query = Term("traditional", search_string) \
-                        | Term('simplified', search_string) \
-                        | Term('meaning', search_string)
+                    | Term('simplified', search_string) \
+                    | Term('meaning', search_string)
             results = searcher.search(query)
             return_value = []
             for result in results:
@@ -328,6 +328,14 @@ class Dictionary:
                     result['meaning']
                 ));
             return return_value
+
+    def __contains__(self, key):
+        with self._index.searcher() as searcher:
+            query = Term("traditional", key) \
+                    | Term('simplified', key)
+            results = searcher.search(query)
+            return len(results) > 0
+
 
 __standard_dictionary_path = os.path.join(
     os.path.dirname(__file__),
@@ -545,3 +553,6 @@ def format_pinyin_sequence(tuples):
     for t in tuples:
         result += format_pinyin(t[0], t[1])
     return result
+
+def segment(text, dictionary=None):
+    pass
