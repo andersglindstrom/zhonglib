@@ -558,17 +558,31 @@ def format_pinyin_sequence(tuples):
         result += format_pinyin(t[0], t[1])
     return result
 
+# For segmenation algorithm see the following:
+# http://technology.chtsai.org/mmseg/
+# A copy of that page is kept in the doc directory.
+
 def print_debug(depth, *args):
     print ' ' * depth,
     for a in args:
         print a,
     print
 
-def get_chunk_lists(text, start_idx, dictionary, max_key_length, list_length=3, depth=0):
-    #print_debug(depth, 'get_chunk_lists: enter')
+# A chunk is a list of matched words.
+# This function looks at the given text starting from the starting index.
+# It will return a list of all chunks that can be found from that position.
+# The chunks will be of the requested length unless there is not enough text
+# left to do so. In that case, some chunks may be shorter. If the algorithm
+# gets to a point where there is still text left but it cannot find a matching
+# word, it will fail.  It does this by returning an empty list.
+#
+# This is a recursive function. The last two parameters are used for recursion
+# and should not be used by client code.
+def get_chunks(text, start_idx, dictionary, max_key_length, chunk_length=3, depth=0):
+    #print_debug(depth, 'get_chunks: enter')
     #print_debug(depth, 'text: "%s"'%text)
-    if list_length == 0:
-        #print_debug(depth, 'get_chunk_lists: exit(1)')
+    if chunk_length == 0:
+        #print_debug(depth, 'get_chunks: exit(1)')
         # A list length of 0 mean there is only one possible list, the empty
         # list. This is not the same as no chunk list. See below when there
         # are no matching words.
@@ -596,7 +610,7 @@ def get_chunk_lists(text, start_idx, dictionary, max_key_length, list_length=3, 
             first_words.append(word)
 
     if len(first_words) == 0:
-        #print_debug(depth, 'get_chunk_lists: exit(2)')
+        #print_debug(depth, 'get_chunks: exit(2)')
         # None of the input could be matched to any words. There are no
         # chunk lists.
         return []
@@ -607,49 +621,50 @@ def get_chunk_lists(text, start_idx, dictionary, max_key_length, list_length=3, 
     result = []
     #print_debug(depth, 'first_words:', first_words)
     for first_word in first_words:
-        tails = get_chunk_lists(text, start_idx+len(first_word), dictionary, max_key_length, list_length-1, depth+1)
+        tails = get_chunks(
+            text,
+            start_idx+len(first_word),
+            dictionary,
+            max_key_length,
+            chunk_length-1,
+            depth+1
+        )
         #print_debug(depth, "first_word: '%s' tails: %s"%(first_word,tails))
         for tail in tails:
             result.append([first_word] + tail)
 
-    #print_debug(depth, 'get_chunk_lists: exit(3)')
+    #print_debug(depth, 'get_chunks: exit(3)')
     return result
 
-def chunk_list_character_count(chunk_list):
+# The length of a chunk is the total number of characters in the chunk. It is
+# not just the length of the list.
+def chunk_length(chunk_list):
     return reduce(lambda total, chunk: total+len(chunk), chunk_list, 0)
 
 def get_next_word(text, idx, dictionary, max_key_length):
-    candidates = get_chunk_lists(text, idx, dictionary, max_key_length)
+    candidates = get_chunks(text, idx, dictionary, max_key_length)
 
     if len(candidates) == 1:
         # No ambiguities.  Choose the first chunk of the only candidate.
         return candidates[0][0]
 
     # There is more than one candidate. Use Rule 1, which is to pick the
-    # 3-element chunk list with biggest number of characters in it and then
-    # to pick the first chunk.
-    lengths = map(lambda l: chunk_list_character_count(l), candidates)
-    max_length = max(lengths)
-    candidates = filter(
-        lambda l: chunk_list_character_count(l) == max_length,
-        candidates
-    )
+    # chunk with biggest number of characters in it and then to pick the
+    # first word.
+    max_length = max(map(lambda l: chunk_length(l), candidates))
+    candidates = filter(lambda l: chunk_length(l) == max_length, candidates)
 
     if len(candidates) == 1:
         # No ambiguities.  Choose the first chunk of the only candidate.
         return candidates[0][0]
 
     # All candidates have the same number of characters.  Now choose the one
-    # with the highest average chunk length.  Becuase they all have the same
+    # with the highest average word length.  Becuase they all have the same
     # number of characters, this is the same as choosing the chunk list with
-    # the smallest number of chunks in it.
+    # the smallest number of words in it.
 
-    chunk_counts = map(lambda l: len(l), candidates)
-    min_chunk_count = min(chunk_counts)
-    candidates = filter(
-        lambda l: len(l) == min_chunk_count,
-        candidates
-    )
+    min_avg_length = min(map(lambda l: len(l), candidates))
+    candidates = filter(lambda l: len(l) == min_avg_length, candidates)
 
     if len(candidates) == 1:
         # No ambiguities.  Choose the first chunk of the only candidate.
