@@ -564,7 +564,7 @@ def print_debug(depth, *args):
         print a,
     print
 
-def get_chunk_lists(text, start_idx, dictionary, max_key_length, list_length, depth=0):
+def get_chunk_lists(text, start_idx, dictionary, max_key_length, list_length=3, depth=0):
     #print_debug(depth, 'get_chunk_lists: enter')
     #print_debug(depth, 'text: "%s"'%text)
     if list_length == 0:
@@ -615,10 +615,28 @@ def get_chunk_lists(text, start_idx, dictionary, max_key_length, list_length, de
     #print_debug(depth, 'get_chunk_lists: exit(3)')
     return result
 
-def _segment_from(text, idx, dictionary, max_key_length):
-    chunk_lists = get_chunk_lists(text)
+def chunk_list_character_count(chunk_list):
+    return reduce(lambda total, chunk: total+len(chunk), chunk_list, 0)
+
+def get_next_word(text, idx, dictionary, max_key_length):
+    chunk_lists = get_chunk_lists(text, idx, dictionary, max_key_length)
+    lengths = map(lambda l: chunk_list_character_count(l), chunk_lists)
+    max_length = max(lengths)
+    candidates = filter(lambda l: len(l) == max_length, chunk_lists)
+    if len(candidates) == 1:
+        # No ambiguities.  Choose the first chunk.
+        return candidates[0][0]
+    return None
 
 def segment(text, dictionary=None, max_key_length=None):
     if dictionary == None:
         dictionary = standard_dictionary()
-    return _segment_from(text, 0, dictionary, max_key_length)
+    result = []
+    idx = 0
+    while idx < len(text):
+        next_word = get_next_word(text, idx, dictionary, max_key_length)
+        if next_word == None:
+            return None
+        result.append(next_word)
+        idx += len(next_word)
+    return result

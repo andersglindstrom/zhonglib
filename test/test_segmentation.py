@@ -121,3 +121,28 @@ class TestSegmentation(unittest.TestCase):
               ['AB','EA', 'AD'] ],
             zl.get_chunk_lists('ABEAAD', 0, self._dict, 2, 3)
         )
+
+    def test_chunking_14(self):
+        self.assertEqual(
+            [ ['E','A','A'],
+              ['E','A','AD'],
+              ['EA','AD'] ],
+            zl.get_chunk_lists('EAAD', 0, self._dict, 2, 3)
+        )
+
+    def test_chunking_15(self):
+        self.assertEqual(
+            [ ['AD'] ],
+            zl.get_chunk_lists('AD', 0, self._dict, 2, 3)
+        )
+
+    def test_chunk_list_character_count(self):
+        self.assertEqual(0, zl.chunk_list_character_count([]))
+        self.assertEqual(3, zl.chunk_list_character_count(['AA', 'B']))
+        self.assertEqual(6, zl.chunk_list_character_count(['AA', 'B', 'CCC']))
+
+    def test_segmentation_1(self):
+        self.assertEqual(
+            ['A'],
+            zl.segment('A', self._dict, 2)
+        )
