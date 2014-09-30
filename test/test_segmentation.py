@@ -146,3 +146,9 @@ class TestSegmentation(unittest.TestCase):
             ['A'],
             zl.segment('A', self._dict, 2)
         )
+
+    def test_segmentation_2(self):
+        self.assertEqual(
+            ['AB', 'EA', 'AD'],
+            zl.segment('ABEAAD', self._dict, 2)
+        )

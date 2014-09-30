@@ -619,13 +619,42 @@ def chunk_list_character_count(chunk_list):
     return reduce(lambda total, chunk: total+len(chunk), chunk_list, 0)
 
 def get_next_word(text, idx, dictionary, max_key_length):
-    chunk_lists = get_chunk_lists(text, idx, dictionary, max_key_length)
-    lengths = map(lambda l: chunk_list_character_count(l), chunk_lists)
-    max_length = max(lengths)
-    candidates = filter(lambda l: len(l) == max_length, chunk_lists)
+    candidates = get_chunk_lists(text, idx, dictionary, max_key_length)
+
     if len(candidates) == 1:
-        # No ambiguities.  Choose the first chunk.
+        # No ambiguities.  Choose the first chunk of the only candidate.
         return candidates[0][0]
+
+    # There is more than one candidate. Use Rule 1, which is to pick the
+    # 3-element chunk list with biggest number of characters in it and then
+    # to pick the first chunk.
+    lengths = map(lambda l: chunk_list_character_count(l), candidates)
+    max_length = max(lengths)
+    candidates = filter(
+        lambda l: chunk_list_character_count(l) == max_length,
+        candidates
+    )
+
+    if len(candidates) == 1:
+        # No ambiguities.  Choose the first chunk of the only candidate.
+        return candidates[0][0]
+
+    # All candidates have the same number of characters.  Now choose the one
+    # with the highest average chunk length.  Becuase they all have the same
+    # number of characters, this is the same as choosing the chunk list with
+    # the smallest number of chunks in it.
+
+    chunk_counts = map(lambda l: len(l), candidates)
+    min_chunk_count = min(chunk_counts)
+    candidates = filter(
+        lambda l: len(l) == min_chunk_count,
+        candidates
+    )
+
+    if len(candidates) == 1:
+        # No ambiguities.  Choose the first chunk of the only candidate.
+        return candidates[0][0]
+
     return None
 
 def segment(text, dictionary=None, max_key_length=None):
