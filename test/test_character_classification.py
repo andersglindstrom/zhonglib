@@ -55,10 +55,10 @@ class TestCharacterClassification(unittest.TestCase):
         self.assertFalse(zl.is_description_character(unichr(0x2FFF+1)))
 
     def test_is_symbol_or_punctuation(self):
-        self.assertFalse(zl.is_symobl_or_punctuation(unichr(0x3000-1)))
-        self.assertTrue(zl.is_symobl_or_punctuation(unichr(0x3000)))
-        self.assertTrue(zl.is_symobl_or_punctuation(unichr(0x303F)))
-        self.assertFalse(zl.is_symobl_or_punctuation(unichr(0x303F+1)))
+        self.assertFalse(zl.is_symbol_or_punctuation(unichr(0x3000-1)))
+        self.assertTrue(zl.is_symbol_or_punctuation(unichr(0x3000)))
+        self.assertTrue(zl.is_symbol_or_punctuation(unichr(0x303F)))
+        self.assertFalse(zl.is_symbol_or_punctuation(unichr(0x303F+1)))
 
     def test_is_stroke(self):
         self.assertFalse(zl.is_stroke(unichr(0x31C0-1)))

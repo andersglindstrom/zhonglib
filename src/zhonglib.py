@@ -180,7 +180,7 @@ def is_kangxi_radical(ch):
 def is_description_character(ch):
     return unichr(0x2FF0) <= ch and ch <= unichr(0x2FFF)
 
-def is_symobl_or_punctuation(ch):
+def is_symbol_or_punctuation(ch):
     return unichr(0x3000) <= ch and ch <= unichr(0x303F)
 
 def is_stroke(ch):
@@ -210,7 +210,7 @@ def is_cjk_character(ch):
         or is_supplemental_radical(ch)\
         or is_kangxi_radical(ch)\
         or is_description_character(ch)\
-        or is_symobl_or_punctuation(ch)\
+        or is_symbol_or_punctuation(ch)\
         or is_stroke(ch)\
         or is_enclosed_letter_or_month(ch)\
         or is_compatibility_character(ch)\
@@ -564,7 +564,7 @@ def format_pinyin_sequence(tuples):
         result += format_pinyin(t[0], t[1])
     return result
 
-# For segmenation algorithm see the following:
+# For segmentation algorithm see the following:
 # http://technology.chtsai.org/mmseg/
 # A copy of that page is kept in the doc directory.
 
@@ -681,7 +681,9 @@ def get_next_word(text, idx, dictionary, max_key_length):
 
     return None
 
-def segment(text, dictionary=None, max_key_length=None):
+# Segments a contiguous string of characters; that is, it must not contain
+# any punctuation or whitespace.
+def segment_contiguous(text, dictionary=None, max_key_length=None):
     if dictionary == None:
         dictionary = standard_dictionary()
     result = []
@@ -693,3 +695,10 @@ def segment(text, dictionary=None, max_key_length=None):
         result.append(next_word)
         idx += len(next_word)
     return result
+
+# Segments a piece of text.  Whitespace and punctuation are used as the
+# primary segmentation points.  After that, each contiguous string of
+# characters is segmented using 'segment_contiguous.'
+
+def segment(text, dictionary=None, max_key_length=None):
+    return segment_contiguous(text, dictionary, max_key_length)
