@@ -152,3 +152,18 @@ class TestSegmentation(unittest.TestCase):
             ['AB', 'EA', 'AD'],
             zl.segment('ABEAAD', self._dict, 2)
         )
+
+    def test_segmentation_3(self):
+        self.assertEqual(
+            ['AB', 'EA', 'AD', 'AB', 'EA', 'AD'],
+            zl.segment('ABEAADABEAAD', self._dict, 2)
+        )
+
+
+    def _test_segmentation_3(self):
+        # Fail because can't match some of it
+        with self.assertRaises(zl.SegmentationError) as context_manager:
+            zl.segment('ABABXX', self._dict, 2)
+        error = context_manager.exception
+        self.assertEqual(['A', 'B'], error.partial_segmentation)
+        self.assertEqual('XX', error.remaining_text)

@@ -45,6 +45,12 @@ class ZhonglibException(Exception):
     def __str__(self):
         return self.message
 
+class SegmentationError(ZhonglibException):
+
+    def __init__(self, partial_segmentation, remaining_text):
+        self.partial_segmentation = partial_segmentation
+        self.remaining_text = remaining_text
+
 class CharacterDecomposer:
 
     def __init__(self, file_name):
@@ -644,6 +650,9 @@ def chunk_length(chunk_list):
 def get_next_word(text, idx, dictionary, max_key_length):
     candidates = get_chunks(text, idx, dictionary, max_key_length)
 
+    if len(candidates) == 0:
+        return None
+
     if len(candidates) == 1:
         # No ambiguities.  Choose the first chunk of the only candidate.
         return candidates[0][0]
@@ -680,7 +689,7 @@ def segment(text, dictionary=None, max_key_length=None):
     while idx < len(text):
         next_word = get_next_word(text, idx, dictionary, max_key_length)
         if next_word == None:
-            return None
+            raise SegmentationError(result, text[idx:])
         result.append(next_word)
         idx += len(next_word)
     return result
