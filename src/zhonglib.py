@@ -331,6 +331,10 @@ class Dictionary:
 
     def __contains__(self, key):
         with self._index.searcher() as searcher:
+            # Documentation for Whoosh says 'in'
+            # operator can be used on the searcher
+            # to look for the key but it didn't work
+            # for me.
             query = Term("traditional", key) \
                     | Term('simplified', key)
             results = searcher.search(query)
@@ -554,5 +558,55 @@ def format_pinyin_sequence(tuples):
         result += format_pinyin(t[0], t[1])
     return result
 
-def segment(text, dictionary=None):
-    pass
+def print_debug(depth, *args):
+    print ' ' * depth,
+    for a in args:
+        print a,
+    print
+
+def get_chunk_lists(text, start_idx, dictionary, max_key_length, list_length, depth=0):
+    print_debug(depth, 'get_chunk_lists: enter')
+    print_debug(depth, 'text: "%s"'%text)
+    if list_length == 0:
+        print_debug(depth, 'get_chunk_lists: exit(1)')
+        return [[]]
+
+    # Get first words
+    first_words = []
+    last_idx = min(len(text), start_idx+max_key_length)
+
+    if start_idx == last_idx:
+        # No more input left
+        print_debug(depth, 'no input left')
+        return [[]]
+
+    print_debug(depth, 'start_idx: %s last_idx: %s'%(start_idx,last_idx))
+    for end_idx in xrange(start_idx, last_idx+1):
+        print_debug(depth, 'end_idx:',end_idx)
+        word = text[start_idx:end_idx]
+        print_debug(depth, "word: '%s'"%word)
+        if word in dictionary:
+            first_words.append(word)
+
+    if len(first_words) == 0:
+        print_debug(depth, 'get_chunk_lists: exit(2)')
+        return []
+
+    result = []
+    print_debug(depth, 'first_words:', first_words)
+    for first_word in first_words:
+        tails = get_chunk_lists(text, start_idx+len(first_word), dictionary, max_key_length, list_length-1, depth+1)
+        print_debug(depth, "first_word: '%s' tails: %s"%(first_word,tails))
+        for tail in tails:
+            result.append([first_word] + tail)
+
+    print_debug(depth, 'get_chunk_lists: exit(3)')
+    return result
+
+def _segment_from(text, idx, dictionary, max_key_length):
+    chunk_lists = get_chunk_lists(text)
+
+def segment(text, dictionary=None, max_key_length=None):
+    if dictionary == None:
+        dictionary = standard_dictionary()
+    return _segment_from(text, 0, dictionary, max_key_length)
