@@ -569,6 +569,9 @@ def get_chunk_lists(text, start_idx, dictionary, max_key_length, list_length, de
     print_debug(depth, 'text: "%s"'%text)
     if list_length == 0:
         print_debug(depth, 'get_chunk_lists: exit(1)')
+        # A list length of 0 mean there is only one possible list, the empty
+        # list. This is not the same as no chunk list. See below when there
+        # are no matching words.
         return [[]]
 
     # Get first words
@@ -578,8 +581,12 @@ def get_chunk_lists(text, start_idx, dictionary, max_key_length, list_length, de
     if start_idx == last_idx:
         # No more input left
         print_debug(depth, 'no input left')
+        # If there is no more input, the empty list is the only possible chunk
+        # list. This is not the same as no chunk list. See below when there
         return [[]]
 
+    # Find all words at the start of the input up to the max key length
+    # and also not exceeding the available input.
     print_debug(depth, 'start_idx: %s last_idx: %s'%(start_idx,last_idx))
     for end_idx in xrange(start_idx, last_idx+1):
         print_debug(depth, 'end_idx:',end_idx)
@@ -590,8 +597,13 @@ def get_chunk_lists(text, start_idx, dictionary, max_key_length, list_length, de
 
     if len(first_words) == 0:
         print_debug(depth, 'get_chunk_lists: exit(2)')
+        # None of the input could be matched to any words. There are no
+        # chunk lists.
         return []
 
+    # For every possible word at the start of the input, find all the possible
+    # chunk lists for the remaining input.  Once that's done, for every following
+    # chunk list, create a new one that prepends the first word.
     result = []
     print_debug(depth, 'first_words:', first_words)
     for first_word in first_words:
