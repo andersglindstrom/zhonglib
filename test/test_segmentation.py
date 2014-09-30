@@ -141,6 +141,20 @@ class TestSegmentation(unittest.TestCase):
         self.assertEqual(3, zl.chunk_length(['AA', 'B']))
         self.assertEqual(6, zl.chunk_length(['AA', 'B', 'CCC']))
 
+    def test_split_into_contiguous(self):
+        self.assertEqual(
+            ['AB','CD'],
+            zl.split_into_contiguous('AB CD')
+        )
+        self.assertEqual(
+            [u'AB',u'CD'],
+            zl.split_into_contiguous(u'AB。。CD')
+        )
+        self.assertEqual(
+            [u'AB',u'CD'],
+            zl.split_into_contiguous(u'AB。。CD    ')
+        )
+
     def test_segmentation_1(self):
         self.assertEqual(
             ['A'],
@@ -159,7 +173,6 @@ class TestSegmentation(unittest.TestCase):
             zl.segment('ABEAADABEAAD', self._dict, 2)
         )
 
-
     def _test_segmentation_3(self):
         # Fail because can't match some of it
         with self.assertRaises(zl.SegmentationError) as context_manager:
@@ -167,3 +180,15 @@ class TestSegmentation(unittest.TestCase):
         error = context_manager.exception
         self.assertEqual(['A', 'B'], error.partial_segmentation)
         self.assertEqual('XX', error.remaining_text)
+
+    def test_segmentation_4(self):
+        self.assertEqual(
+            ['AB', 'EA', 'AD', 'AB', 'EA', 'AD'],
+            zl.segment(u'ABEAAD。ABEAAD', self._dict, 2)
+        )
+
+    def test_segmentation_5(self):
+        self.assertEqual(
+            [u'門口',u'水果'],
+            zl.segment(u'門口水果')
+        )

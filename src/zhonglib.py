@@ -4,6 +4,7 @@ import os.path
 import functools
 import operator
 import codecs
+import string
 
 # Constants
 
@@ -414,7 +415,12 @@ def decompose(text, stopAtStrokes=True):
     if len(text) == 1:
         return decompose_character(text, stopAtStrokes)
     else:
-        return decompose_word(text)
+        segments = segment(text)
+        if len(segments) == 1:
+            word = segments[0]
+            return decompose_word(word)
+        else:
+            return segments
 
 def extract_cjk(text):
     state = 1
@@ -683,9 +689,7 @@ def get_next_word(text, idx, dictionary, max_key_length):
 
 # Segments a contiguous string of characters; that is, it must not contain
 # any punctuation or whitespace.
-def segment_contiguous(text, dictionary=None, max_key_length=None):
-    if dictionary == None:
-        dictionary = standard_dictionary()
+def segment_contiguous(text, dictionary, max_key_length):
     result = []
     idx = 0
     while idx < len(text):
@@ -696,9 +700,39 @@ def segment_contiguous(text, dictionary=None, max_key_length=None):
         idx += len(next_word)
     return result
 
+def split_into_contiguous(text):
+    result = []
+    current_word = ''
+    state = 1
+    for ch in text:
+        if state == 1:
+            if ch.isspace()\
+            or is_symbol_or_punctuation(ch)\
+            or ch in string.punctuation:
+                state = 2
+                result.append(current_word)
+                current_word = ''
+            else:
+                current_word += ch
+        elif state == 2:
+            if not ch.isspace()\
+            and not is_symbol_or_punctuation(ch)\
+            and not ch in string.punctuation:
+                current_word += ch
+                state = 1
+    if len(current_word) > 0:
+        result.append(current_word)
+    return result
+
 # Segments a piece of text.  Whitespace and punctuation are used as the
 # primary segmentation points.  After that, each contiguous string of
 # characters is segmented using 'segment_contiguous.'
 
 def segment(text, dictionary=None, max_key_length=None):
-    return segment_contiguous(text, dictionary, max_key_length)
+    if dictionary == None:
+        dictionary = standard_dictionary()
+        max_key_length = 7  # Fix this
+    result = []
+    for c in split_into_contiguous(text):
+        result += segment_contiguous(c, dictionary, max_key_length)
+    return result
