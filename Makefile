@@ -2,13 +2,14 @@
 INSTALL_DIR	= ~/dev/lib/python
 
 DICTIONARY_DIR=src/zhonglib-data/dictionary
-DICTIONARY_FILE=data/cedict_1_0_ts_utf-8_mdbg.txt
+DICTIONARY_FILE=data/cedict_1_0_ts_utf-8_mdbg_modified.txt
 
 .PHONY:	all
 all:	${DICTIONARY_DIR}
 
 ${DICTIONARY_DIR}:	${DICTIONARY_FILE}
-	src/mkdict.py ${DICTIONARY_FILE} ${DICTIONARY_DIR}
+	rm -rf src/zhonglib-data/dictionary
+	src/mkfulldict.py ${DICTIONARY_FILE} ${DICTIONARY_DIR}
 
 .PHONY:	install
 install:

@@ -46,11 +46,14 @@ class ZhonglibException(Exception):
     def __str__(self):
         return self.message
 
-class SegmentationError(ZhonglibException):
+class DecompositionError(ZhonglibException):
 
     def __init__(self, partial_segmentation, remaining_text):
         self.partial_segmentation = partial_segmentation
         self.remaining_text = remaining_text
+
+    def __str__(self):
+        return "Unable to decompose '%s'"%self.remaining_text
 
 class CharacterDecomposer:
 
