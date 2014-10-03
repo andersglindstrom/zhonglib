@@ -22,9 +22,13 @@ class TestDecomposition(unittest.TestCase):
         decomposition = zl.decompose(u'門口好像')
         self.assertEquals([u'門口',u'好像'], decomposition)
 
-    def test_decomposition_bug(self):
+    def test_decomposition_bug_1(self):
         decomposition = zl.decompose(u'車')
         self.assertEqual([u'二',u'丨',u'日'], decomposition)
+
+    def test_decomposition_bug_2(self):
+        decomposition = zl.decompose(u'胖')
+        self.assertEqual([u'月', u'半'], decomposition)
 
 if __name__ == '__main__':
     unittest.main()
