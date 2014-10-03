@@ -48,12 +48,11 @@ class ZhonglibException(Exception):
 
 class DecompositionError(ZhonglibException):
 
-    def __init__(self, partial_segmentation, remaining_text):
-        self.partial_segmentation = partial_segmentation
-        self.remaining_text = remaining_text
+    def __init__(self, text):
+        self.text = text
 
     def __str__(self):
-        return "Unable to decompose '%s'"%self.remaining_text
+        return 'Unable to decompose "%s"'%self.text
 
 class CharacterDecomposer:
 
@@ -709,7 +708,7 @@ def segment_contiguous(text, dictionary, max_key_length):
     while idx < len(text):
         next_word = get_next_word(text, idx, dictionary, max_key_length)
         if next_word == None:
-            raise SegmentationError(result, text[idx:])
+            raise DecompositionError(text)
         result.append(next_word)
         idx += len(next_word)
     return result
@@ -745,7 +744,7 @@ def split_into_contiguous(text):
 def segment(text, dictionary=None, max_key_length=None):
     if dictionary == None:
         dictionary = standard_dictionary()
-        max_key_length = 7  # Fix this
+        max_key_length = 9  # Fix this. It should be based on dictionary contents.
     result = []
     for c in split_into_contiguous(text):
         result += segment_contiguous(c, dictionary, max_key_length)
