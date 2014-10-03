@@ -1,0 +1,15 @@
+#!/usr/bin/env python
+
+import sys
+import codecs
+import zhonglib
+
+if not len(sys.argv) == 1:
+    print 'usage: %s'%sys.argv[0]
+    sys.exit(1)
+
+with codecs.getreader('utf-8')(sys.stdin) as stdin:
+    for line in stdin:
+        for ch in line:
+            if zhonglib.is_supplemental_radical(ch):
+                print '0x%X'%ord(ch)

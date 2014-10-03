@@ -11,12 +11,7 @@ if not len(sys.argv) == 2:
 file_name = sys.argv[1]
 
 with codecs.open(file_name, 'r', encoding='utf-8') as f:
-    line_number = 0
-    result = []
     for line in f:
-        line_number += 1
         for ch in line:
             if zhonglib.is_kangxi_radical(ch):
-                result.append(line_number)
-    result = set(result)
-    print result
+                print ch

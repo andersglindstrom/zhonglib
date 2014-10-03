@@ -29,6 +29,15 @@ class TestPinyinUtils(unittest.TestCase):
         self.assertEqual((u'lÜ', 3), pinyin_tuples[0])
         self.assertEqual((u'guan', 3), pinyin_tuples[1])
 
+    def test_parse_numbered_pinyin_6(self):
+        pinyin_tuples = zl.parse_cedict_pinyin(u'[xx5]')
+        self.assertEqual(None, pinyin_tuples[0])
+
+    def test_parse_numbered_pinyin_6(self):
+        pinyin_tuples = zl.parse_cedict_pinyin(u'[xx5 guan3]')
+        self.assertEqual(None, pinyin_tuples[0])
+        self.assertEqual((u'guan', 3), pinyin_tuples[1])
+
     def test_format_pinyin_1(self):
         self.assertEqual(u'a', zl.format_pinyin(u'a', 0))
         self.assertEqual(u'ā', zl.format_pinyin(u'a', 1))

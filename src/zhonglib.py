@@ -454,6 +454,10 @@ def extract_cjk(text):
     return pattern, tuple(words)
 
 def _parse_one_cedict_pinyin(text):
+    if text == 'xx5':
+        # This is a special CEDICT indicator that there is no pinyin for
+        # the given word.
+        return None
     if text[-1].isdigit():
         syllable = text[0:-1]
         tone = int(text[-1])
@@ -564,10 +568,17 @@ def format_pinyin(syllable, tone):
     # Put it all together again
     return syllable[0:vowel_idx] + toned_vowel + syllable[vowel_idx+1:]
 
+# A pinyin sequence is a sequence of pairs and None. A pair contains
+# a syllable and a tone number.  If None, it means that there is no
+# pinyin available. This happens in the CEDICT dictionary sometimes for
+# Unicode supplemental radicals and Korean characters.
 def format_pinyin_sequence(tuples):
     result = u''
     for t in tuples:
-        result += format_pinyin(t[0], t[1])
+        if t == None:
+            result += 'None'
+        else:
+            result += format_pinyin(t[0], t[1])
     return result
 
 # For segmentation algorithm see the following:
