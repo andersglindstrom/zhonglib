@@ -326,7 +326,7 @@ class Dictionary:
     # Looks for entries in the dictionary. The flags 'traditional',
     # 'simplified' and 'meaning' restrict where the search is conducted. At
     # least of them must be true.
-    def find(self, search_string, traditional=True,simplified=True,meaning=True):
+    def find(self, search_string, traditional=False,simplified=False,meaning=False):
         assert traditional or simplified or meaning
         with self._index.searcher() as searcher:
             query = NullQuery()

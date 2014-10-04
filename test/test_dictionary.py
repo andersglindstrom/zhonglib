@@ -44,25 +44,25 @@ class TestDictionary(unittest.TestCase):
         self.assertEqual([u'个'], result.simplified_measure_words)
 
     def test_traditional_1(self):
-        result = self._dictionary.find(u'門')
+        result = self._dictionary.find(u'門', traditional=True)
         self.assertTrue(result != None)
         self.assertEqual(1, len(result))
         self.gateway_1_checks(result[0])
 
     def test_traditional_2(self):
-        result = self._dictionary.find(u'門口')
+        result = self._dictionary.find(u'門口', traditional=True)
         self.assertTrue(result != None)
         self.assertEqual(1, len(result))
         self.gateway_2_checks(result[0])
 
     def test_simplified_1(self):
-        result = self._dictionary.find(u'门')
+        result = self._dictionary.find(u'门', simplified=True)
         self.assertTrue(result != None)
         self.assertEqual(1, len(result))
         self.gateway_1_checks(result[0])
 
     def test_simplified_2(self):
-        result = self._dictionary.find(u'门口')
+        result = self._dictionary.find(u'门口', simplified=True)
         self.assertTrue(result != None)
         self.assertEqual(1, len(result))
         self.gateway_2_checks(result[0])
@@ -70,7 +70,7 @@ class TestDictionary(unittest.TestCase):
         # Lookup by meaning 'door'.  Should find
         # two entries.
     def test_meaning_1_1(self):
-        result = self._dictionary.find(u'gate')
+        result = self._dictionary.find(u'gate', meaning=True)
         self.assertTrue(result != None)
         self.assertEqual(2, len(result))
         self.gateway_2_checks(result[0])
@@ -79,7 +79,7 @@ class TestDictionary(unittest.TestCase):
         # Lookup by meaning 'doorway'.  Should find
         # two entries.
     def test_meaning_1_2(self):
-        result = self._dictionary.find(u'doorway')
+        result = self._dictionary.find(u'doorway', meaning=True)
         self.assertTrue(result != None)
         self.assertEqual(2, len(result))
         self.gateway_2_checks(result[0])
