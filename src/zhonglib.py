@@ -735,6 +735,7 @@ def get_next_word(text, idx, dictionary, max_key_length):
         # No ambiguities.  Choose the first chunk of the only candidate.
         return candidates[0][0]
 
+    print candidates
     return None
 
 # Segments a contiguous string of characters; that is, it must not contain
