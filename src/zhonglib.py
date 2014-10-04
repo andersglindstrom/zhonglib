@@ -285,6 +285,7 @@ def create_dictionary(source, destination, english_index=True, verbose=False):
     writer.commit()
 
 from whoosh.query import Term
+from whoosh.query import NullQuery
 
 class Entry:
 
@@ -322,11 +323,19 @@ class Dictionary:
     def __init__(self, dict_path):
         self._index =  open_dir(dict_path)
 
-    def find(self, search_string):
+    # Looks for entries in the dictionary. The flags 'traditional',
+    # 'simplified' and 'meaning' restrict where the search is conducted. At
+    # least of them must be true.
+    def find(self, search_string, traditional=True,simplified=True,meaning=True):
+        assert traditional or simplified or meaning
         with self._index.searcher() as searcher:
-            query = Term("traditional", search_string) \
-                    | Term('simplified', search_string) \
-                    | Term('meaning', search_string)
+            query = NullQuery()
+            if traditional:
+                query |= Term("traditional", search_string)
+            if simplified:
+                query |= Term('simplified', search_string)
+            if meaning:
+                query |= Term('meaning', search_string)
             results = searcher.search(query)
             return_value = []
             for result in results:
@@ -565,7 +574,11 @@ def format_pinyin(syllable, tone):
             vowel_idx = len(initial)+1
 
     # Lood up the toned vowel
-    toned_vowel = _tone_table[syllable[vowel_idx]][tone]
+    try:
+        toned_vowel = _tone_table[syllable[vowel_idx]][tone]
+    except IndexError:
+        print 'syllable: "%s" vowel_idx: %s'%(syllable,vowel_idx)
+        raise
 
     # Put it all together again
     return syllable[0:vowel_idx] + toned_vowel + syllable[vowel_idx+1:]
@@ -575,13 +588,17 @@ def format_pinyin(syllable, tone):
 # pinyin available. This happens in the CEDICT dictionary sometimes for
 # Unicode supplemental radicals and Korean characters.
 def format_pinyin_sequence(tuples):
-    result = u''
-    for t in tuples:
-        if t == None:
-            result += 'None'
-        else:
-            result += format_pinyin(t[0], t[1])
-    return result
+    try:
+        result = u''
+        for t in tuples:
+            if t == None:
+                result += 'None'
+            else:
+                result += format_pinyin(t[0], t[1])
+        return result
+    except IndexError:
+        print 'tuples: %s'%tuples
+        raise
 
 # For segmentation algorithm see the following:
 # http://technology.chtsai.org/mmseg/
