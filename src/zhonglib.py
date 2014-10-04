@@ -512,6 +512,13 @@ def is_vowel(ch):
 # and http://en.wikipedia.org/wiki/Pinyin_table
 
 def format_pinyin(syllable, tone):
+
+    if syllable == 'r':
+        # Special case for retroflex r (兒), which should represented
+        # as ('r', 0).
+        assert tone == 0
+        return 'r'
+
     initial = u''
     final = u''
 

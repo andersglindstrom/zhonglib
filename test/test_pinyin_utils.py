@@ -154,6 +154,6 @@ class TestPinyinUtils(unittest.TestCase):
         self.assertEqual(u'rŌushuāi', zl.format_pinyin_sequence([(u'rOu', 1),(u'shuai', 1)]))
 
     def test_bug_1(self):
-        tuples = zl.parse_cedict_pinyin('[pang2 bian1]')
+        tuples = zl.parse_cedict_pinyin('[pang2 bian1 r5]')
         formatted = zl.format_pinyin_sequence(tuples)
-        self.assertEqual(formatted, u'pángbiān')
+        self.assertEqual(formatted, u'pángbiānr')
