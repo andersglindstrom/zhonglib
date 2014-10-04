@@ -43,16 +43,22 @@ class ZhonglibException(Exception):
     def __init__(self, message):
         self.message = message
 
-    def __str__(self):
+    def __unicode__(self):
         return self.message
+
+    def __str__(self):
+        return unicode(self).encode('utf-8')
 
 class DecompositionError(ZhonglibException):
 
     def __init__(self, text):
         self.text = text
 
-    def __str__(self):
+    def __unicode__(self):
         return 'Unable to decompose "%s"'%self.text
+
+    def __str__(self):
+        return unicode(self).encode('utf-8')
 
 class CharacterDecomposer:
 
