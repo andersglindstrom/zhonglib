@@ -306,14 +306,21 @@ class Entry:
                 self.meaning.append(part)
             else: # is a measure word
                 part = part[3:] # Remove 'CL:'
-                part = part[:part.find('[')]    # Remove pinyin
-                if len(part) == 1:
-                    self.traditional_measure_words.append(part)
-                    self.simplified_measure_words.append(part)
-                else:
-                    assert(part[1] == '|')
-                    self.traditional_measure_words.append(part[0])
-                    self.simplified_measure_words.append(part[2])
+                measure_words = [mw.strip().rstrip() for mw in part.split(',')]
+                for mw in measure_words:
+                    mw = mw[:mw.find('[')]    # Remove pinyin
+                    if len(mw) == 1:
+                        # There's only one character.  It is used in both
+                        # traditional and simplified character sets.
+                        self.traditional_measure_words.append(mw)
+                        self.simplified_measure_words.append(mw)
+                    else:
+                        assert(len(mw) == 3)
+                        assert(mw[1] == '|')
+                        # There are two characters.  One for traditional and
+                        # one for simplified. They are separated by | character.
+                        self.traditional_measure_words.append(mw[0])
+                        self.simplified_measure_words.append(mw[2])
 
 class Dictionary:
 
@@ -371,8 +378,8 @@ if os.path.exists(__standard_dictionary_path):
 def standard_dictionary():
     return __standard_dictionary
 
-def find(word):
-    return __standard_dictionary.find(word)
+def find(word, traditional=False,simplified=False,meaning=False):
+    return __standard_dictionary.find(word, traditional, simplified, meaning)
 
 __standard_decomposer = CharacterDecomposer(os.path.join(
     os.path.dirname(__file__),

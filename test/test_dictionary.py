@@ -43,25 +43,25 @@ class TestDictionary(unittest.TestCase):
         self.assertEqual([u'個'], result.traditional_measure_words)
         self.assertEqual([u'个'], result.simplified_measure_words)
 
-    def test_traditional_1(self):
+    def _test_traditional_1(self):
         result = self._dictionary.find(u'門', traditional=True)
         self.assertTrue(result != None)
         self.assertEqual(1, len(result))
         self.gateway_1_checks(result[0])
 
-    def test_traditional_2(self):
+    def _test_traditional_2(self):
         result = self._dictionary.find(u'門口', traditional=True)
         self.assertTrue(result != None)
         self.assertEqual(1, len(result))
         self.gateway_2_checks(result[0])
 
-    def test_simplified_1(self):
+    def _test_simplified_1(self):
         result = self._dictionary.find(u'门', simplified=True)
         self.assertTrue(result != None)
         self.assertEqual(1, len(result))
         self.gateway_1_checks(result[0])
 
-    def test_simplified_2(self):
+    def _test_simplified_2(self):
         result = self._dictionary.find(u'门口', simplified=True)
         self.assertTrue(result != None)
         self.assertEqual(1, len(result))
@@ -69,7 +69,7 @@ class TestDictionary(unittest.TestCase):
         
         # Lookup by meaning 'door'.  Should find
         # two entries.
-    def test_meaning_1_1(self):
+    def _test_meaning_1_1(self):
         result = self._dictionary.find(u'gate', meaning=True)
         self.assertTrue(result != None)
         self.assertEqual(2, len(result))
@@ -78,14 +78,20 @@ class TestDictionary(unittest.TestCase):
         
         # Lookup by meaning 'doorway'.  Should find
         # two entries.
-    def test_meaning_1_2(self):
+    def _test_meaning_1_2(self):
         result = self._dictionary.find(u'doorway', meaning=True)
         self.assertTrue(result != None)
         self.assertEqual(2, len(result))
         self.gateway_2_checks(result[0])
         self.gateway_1_checks(result[1])
 
-    def test_contains(self):
+    def test_multiple_measure_words(self):
+        result = self._dictionary.find(u'課',traditional=True,simplified=True)
+        self.assertEqual(1, len(result))
+        self.assertEquals([u'門',u'堂',u'節'], result[0].traditional_measure_words)
+        self.assertEquals([u'门',u'堂',u'节'], result[0].simplified_measure_words)
+
+    def _test_contains(self):
         self.assertTrue(u'門' in self._dictionary)
         self.assertTrue(u'門口' in self._dictionary)
         self.assertTrue(u'门' in self._dictionary)
