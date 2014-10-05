@@ -422,25 +422,32 @@ def read_standard_frequency_tables():
         'zhonglib-data',
         'traditional-frequencies.txt'
     )
-    global _traditional_frequency_table
+    global __traditional_frequency_table
     if os.path.exists(traditional_frequency_path):
-        _traditional_frequency_table = read_frequency_table(traditional_frequency_path)
+        __traditional_frequency_table = read_frequency_table(traditional_frequency_path)
     else:
-        _traditional_frequency_table = None
+        raise ZhonglibException('Frequency data for traditional characters does not exist.')
 
     simplified_frequency_path = os.path.join(
         os.path.dirname(__file__),
         'zhonglib-data',
         'simplified-frequencies.txt'
     )
-    global _simplified_frequency_table
+    global __simplified_frequency_table
     if os.path.exists(simplified_frequency_path):
-        _simplified_frequency_table = read_frequency_table(simplified_frequency_path)
+        __simplified_frequency_table = read_frequency_table(simplified_frequency_path)
     else:
-        _simplified_frequency_table = None
+        raise ZhonglibException('Frequency data for simplified characters does not exist.')
 
 
 read_standard_frequency_tables()
+
+def character_frequency(character_set, ch):
+    assert character_set == SIMPLIFIED or character_set == TRADITIONAL
+    if character_set == SIMPLIFIED:
+        return __simplified_frequency_table[ch]
+    else:
+        return __traditional_frequency_table[ch]
 
 #==============================================================================
 # Decomposition 

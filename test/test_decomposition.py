@@ -16,8 +16,21 @@ class TestDecomposition(unittest.TestCase):
     def test_standard_frequency_table(self):
         # Just make sure that it's roughly right.  We're just testing
         # that the file was actually read.
-        frequency = zl._traditional_frequency_table[u'門']
-        frequency = zl._simplified_frequency_table[u'门']
+
+        t_frequency = zl.character_frequency(zl.TRADITIONAL, u'門')
+        self.assertTrue(0.05 < t_frequency and t_frequency < 0.06)
+
+        s_frequency = zl.character_frequency(zl.SIMPLIFIED, u'门')
+        self.assertTrue(0.05 < s_frequency and s_frequency < 0.06)
+
+        # Check the same character has different frequencies in
+        # different character sets. Just to make sure that there are
+        # actually two different tables.
+        t_frequency = zl.character_frequency(zl.TRADITIONAL, u'的')
+        self.assertTrue(3 < t_frequency and t_frequency < 4)
+
+        s_frequency = zl.character_frequency(zl.SIMPLIFIED, u'的')
+        self.assertTrue(4 < s_frequency and s_frequency < 5)
 
     def test_decompose_character(self):
         decomposition = zl.decompose(u'好')
