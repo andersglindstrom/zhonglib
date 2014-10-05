@@ -30,13 +30,17 @@ class TestDecomposition(unittest.TestCase):
         decomposition = zl.decompose(u'胖')
         self.assertEqual([u'月', u'半'], decomposition)
 
-    def test_decomposition_bug_3(self):
+    def _test_decomposition_bug_3(self):
         decomposition = zl.decompose(u'中山路')
-        self.assertEqual([u'中', u'山', u'路'], decomposition)
+        self.assertEqual([u'中山', u'路'], decomposition)
 
     def test_decomposition_bug_4(self):
         decomposition = zl.decompose(u'條')
-        self.assertEqual([u'中', u'山', u'路'], decomposition)
+        self.assertEqual([u'亻', u'丨', u'条'], decomposition)
+
+    def _test_decomposition_bug_5(self):
+        decomposition = zl.decompose(u'上星期天')
+        self.assertEqual([u'上', u'星期天'], decomposition)
 
 if __name__ == '__main__':
     unittest.main()

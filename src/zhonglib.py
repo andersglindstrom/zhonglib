@@ -387,6 +387,39 @@ def standard_dictionary():
 def find(word, traditional=False,simplified=False,meaning=False):
     return __standard_dictionary.find(word, traditional, simplified, meaning)
 
+#==============================================================================
+# Character frequency data
+def read_frequency_table(file_name):
+    result = {}
+    with codecs.open(file_name, 'r', encoding='utf-8') as f:
+        for line in f:
+            words = line.split(' ')
+            assert len(words) == 2
+            word = words[0]
+            frequency = int(words[1])
+            result[word] = frequency
+    return result
+
+__traditional_frequencies = None
+__traditional_frequency_path = os.path.join(
+    os.path.dirname(__file__),
+    'zhonglib-data',
+    'tradition-frequencies.txt'
+)
+if os.path.exists(__traditional_frequency_path):
+    __traditional_frequencies = read_frequency_table(__traditional_frequency_path)
+
+__simplified_frequencies = None
+__simplified_frequency_path = os.path.join(
+    os.path.dirname(__file__),
+    'zhonglib-data',
+    'tradition-frequencies.txt'
+)
+if os.path.exists(__simplified_frequency_path):
+    __simplified_frequencies = read_frequency_table(__simplified_frequency_path)
+
+#==============================================================================
+# Decomposition 
 __standard_decomposer = CharacterDecomposer(os.path.join(
     os.path.dirname(__file__),
     'zhonglib-data',
@@ -620,6 +653,19 @@ def format_pinyin_sequence(tuples):
         print 'tuples: %s'%tuples
         raise
 
+def list_to_uc(l):
+    result = u''
+    result += u'['
+    for i in xrange(len(l)):
+        if i > 0:
+            result += u', '
+        if type(l[i]) == list:
+            result += list_to_uc(l[i])
+        else:
+            result += unicode(l[i])
+    result += u']'
+    return result
+
 # For segmentation algorithm see the following:
 # http://technology.chtsai.org/mmseg/
 # A copy of that page is kept in the doc directory.
@@ -681,7 +727,7 @@ def get_chunks(text, start_idx, dictionary, max_key_length, chunk_length=3, dept
     # chunk lists for the remaining input.  Once that's done, for every following
     # chunk list, create a new one that prepends the first word.
     result = []
-    #print_debug(depth, 'first_words:', first_words)
+    #print_debug(depth, 'first_words:', list_to_uc(first_words))
     for first_word in first_words:
         tails = get_chunks(
             text,
@@ -691,7 +737,7 @@ def get_chunks(text, start_idx, dictionary, max_key_length, chunk_length=3, dept
             chunk_length-1,
             depth+1
         )
-        #print_debug(depth, "first_word: '%s' tails: %s"%(first_word,tails))
+        #print_debug(depth, "first_word: '%s' tails: %s"%(first_word,list_to_uc(tails)))
         for tail in tails:
             result.append([first_word] + tail)
 
@@ -704,8 +750,11 @@ def chunk_length(chunk_list):
     return reduce(lambda total, chunk: total+len(chunk), chunk_list, 0)
 
 def get_next_word(text, idx, dictionary, max_key_length):
+    
+    #print 'get_next_word: text=%s idx=%s'%(text,idx)
     candidates = get_chunks(text, idx, dictionary, max_key_length)
 
+    #print 'get_next_word: candidates=', list_to_uc(candidates)
     if len(candidates) == 0:
         return None
 
@@ -735,7 +784,7 @@ def get_next_word(text, idx, dictionary, max_key_length):
         # No ambiguities.  Choose the first chunk of the only candidate.
         return candidates[0][0]
 
-    print candidates
+    #print 'get_next_word: ambiguity not resolved, candidates=',list_to_uc(candidates)
     return None
 
 # Segments a contiguous string of characters; that is, it must not contain
@@ -743,8 +792,10 @@ def get_next_word(text, idx, dictionary, max_key_length):
 def segment_contiguous(text, dictionary, max_key_length):
     result = []
     idx = 0
+    #print 'text:',text
     while idx < len(text):
         next_word = get_next_word(text, idx, dictionary, max_key_length)
+        #print 'next_word:',next_word
         if next_word == None:
             raise DecompositionError(text)
         result.append(next_word)
