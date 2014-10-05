@@ -792,6 +792,8 @@ def morphic_freedom(chunk, character_set, frequency_table=None):
     if not frequency_table:
         frequency_table = get_frequency_table(character_set)
     for w in one_char_words:
+        if not w in frequency_table:
+            raise DecompositionError('No frequency data for "%s"'%w)
         result += math.log(frequency_table[w])
     return result
 
