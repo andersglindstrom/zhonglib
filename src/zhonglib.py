@@ -251,8 +251,8 @@ def parse_dictionary_line(line):
     end = string.find(line, "]", start)+1
     pinyin = line[start:end]
     start = end+1
-    meaning = line[start:].rstrip()
-    return traditional, simplified, pinyin, meaning
+    english = line[start:].rstrip()
+    return traditional, simplified, pinyin, english
 
 # Given a file in the CC-CEDICT format, this function creates a Whoosh
 # index that is used later for searching
@@ -261,14 +261,14 @@ def create_dictionary(source, destination, english_index=True, verbose=False):
     # Using TEXT doesn't work properly because single letter words are ignored.
 
     if english_index:
-        meaning_field = TEXT(stored=True)
+        english_field = TEXT(stored=True)
     else:
-        meaning_field = STORED()
+        english_field = STORED()
 
     schema = Schema(traditional=ID(stored=True),
                     simplified=ID(stored=True),
                     pinyin=TEXT(stored=True),
-                    meaning=meaning_field)
+                    english=english_field)
     if os.path.exists(destination):
         msg = "Dictionary already exists: " + destination
         raise ZhonglibException(msg)
@@ -281,7 +281,7 @@ def create_dictionary(source, destination, english_index=True, verbose=False):
     with codecs.open(source, 'r', encoding='utf-8') as f:
         for line in f:
             if not line[0] == '#':
-                trad, simp, pin, mean = parse_dictionary_line(line)
+                trad, simp, pin, eng = parse_dictionary_line(line)
                 if verbose:
                     line_count += 1
                     pct_done = 100.0*line_count/num_lines
@@ -290,7 +290,7 @@ def create_dictionary(source, destination, english_index=True, verbose=False):
                         traditional=trad,
                         simplified=simp,
                         pinyin=pin,
-                        meaning=mean)
+                        english=eng)
     if verbose:
         print "Committing. This may take a couple of minutes."
     writer.commit()
@@ -300,21 +300,21 @@ from whoosh.query import NullQuery
 
 class Entry:
 
-    def __init__(self, traditional, simplified, pinyin, raw_meaning):
+    def __init__(self, traditional, simplified, pinyin, raw_english):
         self.traditional = traditional
         self.simplified = simplified
         self.pinyin = pinyin
-        self.raw_meaning = raw_meaning
-        self.meaning = []
+        self.raw_english = raw_english
+        self.english = []
         self.traditional_measure_words = []
         self.simplified_measure_words = []
-        self._extract_parts(raw_meaning)
+        self._extract_parts(raw_english)
 
-    def _extract_parts(self, raw_meaning):
-        parts = raw_meaning[1:-1].split('/')
+    def _extract_parts(self, raw_english):
+        parts = raw_english[1:-1].split('/')
         for part in parts:
             if not part.startswith('CL:'):
-                self.meaning.append(part)
+                self.english.append(part)
             else: # is a measure word
                 part = part[3:] # Remove 'CL:'
                 measure_words = [mw.strip().rstrip() for mw in part.split(',')]
@@ -356,7 +356,7 @@ class Dictionary:
             if character_set & SIMPLIFIED:
                 query |= Term('simplified', search_string)
             if include_english:
-                query |= Term('meaning', search_string)
+                query |= Term('english', search_string)
             results = searcher.search(query)
             return_value = []
             for result in results:
@@ -364,7 +364,7 @@ class Dictionary:
                     result['traditional'],
                     result['simplified'],
                     result['pinyin'],
-                    result['meaning']
+                    result['english']
                 ));
             return return_value
 

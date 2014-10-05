@@ -24,12 +24,12 @@ class TestDictionary(unittest.TestCase):
         self.assertEqual(u'門', result.traditional)
         self.assertEqual(u'门', result.simplified)
         self.assertEqual(u'[men2]', result.pinyin)
-        self.assertEqual(5, len(result.meaning))
-        self.assertEqual(u'gate', result.meaning[0])
-        self.assertEqual(u'door', result.meaning[1])
-        self.assertEqual(u'gateway', result.meaning[2])
-        self.assertEqual(u'doorway', result.meaning[3])
-        self.assertEqual(u'opening', result.meaning[4])
+        self.assertEqual(5, len(result.english))
+        self.assertEqual(u'gate', result.english[0])
+        self.assertEqual(u'door', result.english[1])
+        self.assertEqual(u'gateway', result.english[2])
+        self.assertEqual(u'doorway', result.english[3])
+        self.assertEqual(u'opening', result.english[4])
         self.assertEqual([u'扇', u'個'], result.traditional_measure_words)
         self.assertEqual([u'扇', u'个'], result.simplified_measure_words)
 
@@ -37,9 +37,9 @@ class TestDictionary(unittest.TestCase):
         self.assertEqual(u'門口', result.traditional)
         self.assertEqual(u'门口', result.simplified)
         self.assertEqual(u'[men2 kou3]', result.pinyin)
-        self.assertEqual(2, len(result.meaning))
-        self.assertEqual(u'doorway', result.meaning[0])
-        self.assertEqual(u'gate', result.meaning[1])
+        self.assertEqual(2, len(result.english))
+        self.assertEqual(u'doorway', result.english[0])
+        self.assertEqual(u'gate', result.english[1])
         self.assertEqual([u'個'], result.traditional_measure_words)
         self.assertEqual([u'个'], result.simplified_measure_words)
 
@@ -67,18 +67,18 @@ class TestDictionary(unittest.TestCase):
         self.assertEqual(1, len(result))
         self.gateway_2_checks(result[0])
         
-        # Lookup by meaning 'door'.  Should find
+        # Lookup by english 'door'.  Should find
         # two entries.
-    def test_meaning_1_1(self):
+    def test_english_1_1(self):
         result = self._dictionary.find(u'gate', include_english=True)
         self.assertTrue(result != None)
         self.assertEqual(2, len(result))
         self.gateway_2_checks(result[0])
         self.gateway_1_checks(result[1])
         
-        # Lookup by meaning 'doorway'.  Should find
+        # Lookup by english 'doorway'.  Should find
         # two entries.
-    def test_meaning_1_2(self):
+    def test_english_1_2(self):
         result = self._dictionary.find(u'doorway', include_english=True)
         self.assertTrue(result != None)
         self.assertEqual(2, len(result))
