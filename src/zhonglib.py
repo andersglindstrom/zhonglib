@@ -16,6 +16,11 @@ GROUP       = 2
 COMPOSED_OF = 3
 VARIANT_OF  = 4
 
+# Traditional or simplified character sets
+
+SIMPLIFIED = 0x0001
+TRADITIONAL = 0x0002
+
 # These codes are used in the file to represent the abovementioned constants.
 _constant_codes = {
 
@@ -336,18 +341,21 @@ class Dictionary:
     def __init__(self, dict_path):
         self._index =  open_dir(dict_path)
 
-    # Looks for entries in the dictionary. The flags 'traditional',
-    # 'simplified' and 'meaning' restrict where the search is conducted. At
-    # least of them must be true.
-    def find(self, search_string, traditional=False,simplified=False,meaning=False):
-        assert traditional or simplified or meaning
+    # Looks for entries in the dictionary.
+    # 'character_set' is TRADITIONAL, SIMPLIFIED, (TRADITIONAL | SIMPLIFIED)
+    # if both are required, or 0 if neither is. If 'include_english' is True,
+    # the English text will be searched too.
+    # At least of of 'character_set' or 'include_english' must be provided.
+
+    def find(self, search_string, character_set, include_english=False):
+        assert character_set or meaning
         with self._index.searcher() as searcher:
             query = NullQuery()
-            if traditional:
+            if character_set & TRADITIONAL:
                 query |= Term("traditional", search_string)
-            if simplified:
+            if character_set & SIMPLIFIED:
                 query |= Term('simplified', search_string)
-            if meaning:
+            if include_english:
                 query |= Term('meaning', search_string)
             results = searcher.search(query)
             return_value = []
@@ -384,8 +392,8 @@ if os.path.exists(__standard_dictionary_path):
 def standard_dictionary():
     return __standard_dictionary
 
-def find(word, traditional=False,simplified=False,meaning=False):
-    return __standard_dictionary.find(word, traditional, simplified, meaning)
+def find(word, character_set=0, include_english=False):
+    return __standard_dictionary.find(word, character_set, include_english)
 
 #==============================================================================
 # Character frequency data

@@ -86,7 +86,7 @@ class TestDictionary(unittest.TestCase):
         self.gateway_1_checks(result[1])
 
     def test_multiple_measure_words(self):
-        result = self._dictionary.find(u'課',traditional=True,simplified=True)
+        result = self._dictionary.find(u'課', character_set = zl.TRADITIONAL | zl.SIMPLIFIED)
         self.assertEqual(1, len(result))
         self.assertEquals([u'門',u'堂',u'節'], result[0].traditional_measure_words)
         self.assertEquals([u'门',u'堂',u'节'], result[0].simplified_measure_words)
