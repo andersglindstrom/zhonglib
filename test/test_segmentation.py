@@ -25,6 +25,7 @@ class TestSegmentation(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         self._dict = TestDict()
+        self._frequency_table = {'A':100, 'B':50}
 
     def test_chunking_0(self):
         # List lengtf of 0 should yield a single empty chunk list.
@@ -184,7 +185,7 @@ class TestSegmentation(unittest.TestCase):
     def test_segmentation_3(self):
         # Fail because can't match some of it
         with self.assertRaises(zl.DecompositionError) as context_manager:
-            zl.segment('ABABXX', zl.TRADITIONAL, self._dict, 2)
+            zl.segment('ABABXX', zl.TRADITIONAL, self._dict, 2, self._frequency_table)
         error = context_manager.exception
         self.assertEqual('ABABXX', error.text)
 

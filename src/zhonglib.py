@@ -5,6 +5,7 @@ import functools
 import operator
 import codecs
 import string
+import math
 
 # Constants
 
@@ -413,9 +414,6 @@ def read_frequency_table(file_name):
             frequency = int(words[1])
             result[word] = frequency
             frequency_total += frequency
-    # Normalise to 100
-    for key, value in result.iteritems():
-        result[key] = value*100.0/frequency_total
     return result
 
 # Populates _traditional_frequency_table and _simplified_frequency_table
@@ -785,8 +783,17 @@ def get_chunks(text, character_set, start_idx, dictionary, max_word_length, chun
 
 # The length of a chunk is the total number of characters in the chunk. It is
 # not just the length of the list.
-def chunk_length(chunk_list):
-    return reduce(lambda total, chunk: total+len(chunk), chunk_list, 0)
+def chunk_length(chunk):
+    return reduce(lambda total, word: total+len(word), chunk, 0)
+
+def morphic_freedom(chunk, character_set, frequency_table=None):
+    result = 0
+    one_char_words = filter(lambda w: len(w) == 1, chunk)
+    if not frequency_table:
+        frequency_table = get_frequency_table(character_set)
+    for w in one_char_words:
+        result += math.log(frequency_table[w])
+    return result
 
 def get_next_word(text, character_set, idx, dictionary, max_word_length, frequency_table):
     
@@ -804,8 +811,8 @@ def get_next_word(text, character_set, idx, dictionary, max_word_length, frequen
     # There is more than one candidate. Use Rule 1, which is to pick the
     # chunk with biggest number of characters in it and then to pick the
     # first word.
-    max_length = max(map(lambda l: chunk_length(l), candidates))
-    candidates = filter(lambda l: chunk_length(l) == max_length, candidates)
+    max_length = max(map(lambda c: chunk_length(c), candidates))
+    candidates = filter(lambda c: chunk_length(c) == max_length, candidates)
 
     if len(candidates) == 1:
         # No ambiguities.  Choose the first chunk of the only candidate.
@@ -816,8 +823,15 @@ def get_next_word(text, character_set, idx, dictionary, max_word_length, frequen
     # number of characters, this is the same as choosing the chunk list with
     # the smallest number of words in it.
 
-    min_avg_length = min(map(lambda l: len(l), candidates))
-    candidates = filter(lambda l: len(l) == min_avg_length, candidates)
+    min_avg_length = min(map(lambda c: len(c), candidates))
+    candidates = filter(lambda c: len(c) == min_avg_length, candidates)
+
+    if len(candidates) == 1:
+        # No ambiguities.  Choose the first chunk of the only candidate.
+        return candidates[0][0]
+
+    max_morphic_freedom = max(map(lambda c: morphic_freedom(c, character_set, frequency_table), candidates))
+    candidates = filter(lambda c: morphic_freedom(c, character_set, frequency_table) == max_morphic_freedom, candidates)
 
     if len(candidates) == 1:
         # No ambiguities.  Choose the first chunk of the only candidate.

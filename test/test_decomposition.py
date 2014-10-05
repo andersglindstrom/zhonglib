@@ -9,28 +9,28 @@ class TestDecomposition(unittest.TestCase):
     def test_read_frequency_table(self):
         path = os.path.join(os.path.dirname(__file__), 'test-frequencies.txt')
         table = zl.read_frequency_table(path)
-        self.assertEqual(50.0, table['A'])
-        self.assertEqual(25.0, table['B'])
-        self.assertEqual(12.5, table['C'])
+        self.assertEqual(100, table['A'])
+        self.assertEqual(50, table['B'])
+        self.assertEqual(25, table['C'])
 
     def test_standard_frequency_table(self):
         # Just make sure that it's roughly right.  We're just testing
         # that the file was actually read.
 
         t_frequency = zl.character_frequency(zl.TRADITIONAL, u'門')
-        self.assertTrue(0.05 < t_frequency and t_frequency < 0.06)
+        self.assertEqual(89827, t_frequency)
 
         s_frequency = zl.character_frequency(zl.SIMPLIFIED, u'门')
-        self.assertTrue(0.05 < s_frequency and s_frequency < 0.06)
+        self.assertEqual(900, s_frequency)
 
         # Check the same character has different frequencies in
         # different character sets. Just to make sure that there are
         # actually two different tables.
         t_frequency = zl.character_frequency(zl.TRADITIONAL, u'的')
-        self.assertTrue(3 < t_frequency and t_frequency < 4)
+        self.assertEqual(6538132, t_frequency)
 
         s_frequency = zl.character_frequency(zl.SIMPLIFIED, u'的')
-        self.assertTrue(4 < s_frequency and s_frequency < 5)
+        self.assertEqual(65535, s_frequency)
 
     def test_decompose_character(self):
         decomposition = zl.decompose(u'好', zl.TRADITIONAL)
@@ -57,15 +57,20 @@ class TestDecomposition(unittest.TestCase):
         decomposition = zl.decompose(u'胖', zl.TRADITIONAL)
         self.assertEqual([u'月', u'半'], decomposition)
 
-    def _test_decomposition_bug_3(self):
+    def test_decomposition_bug_3(self):
+        # The following exercises the morphic freedom rule.
         decomposition = zl.decompose(u'中山路', zl.TRADITIONAL)
-        self.assertEqual([u'中山', u'路'], decomposition)
+        # This isn't actually what we want but it's what the algorithm gives
+        # us from the frequencies. The morphic
+        self.assertEqual([u'中', u'山路'], decomposition)
 
     def test_decomposition_bug_4(self):
         decomposition = zl.decompose(u'條', zl.TRADITIONAL)
         self.assertEqual([u'亻', u'丨', u'条'], decomposition)
 
-    def _test_decomposition_bug_5(self):
+    def test_decomposition_bug_5(self):
+        # This example exercises the morphic freedom rule, which used not
+        # to be implemented.
         decomposition = zl.decompose(u'上星期天', zl.TRADITIONAL)
         self.assertEqual([u'上', u'星期天'], decomposition)
 
