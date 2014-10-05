@@ -14,13 +14,10 @@ class TestDecomposition(unittest.TestCase):
         self.assertEqual(12.5, table['C'])
 
     def test_standard_frequency_table(self):
-        self.assertTrue(len(zl._standard_frequency_table) > 0)
-        frequency = zl._standard_frequency_table[u'的']
         # Just make sure that it's roughly right.  We're just testing
         # that the file was actually read.
-        self.assertTrue(4 < frequency and frequency < 5)
-        frequency = zl._standard_frequency_table[u'門']
-        frequency = zl._standard_frequency_table[u'门']
+        frequency = zl._traditional_frequency_table[u'門']
+        frequency = zl._simplified_frequency_table[u'门']
 
     def test_decompose_character(self):
         decomposition = zl.decompose(u'好')

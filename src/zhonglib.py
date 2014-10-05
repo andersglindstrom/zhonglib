@@ -414,27 +414,33 @@ def read_frequency_table(file_name):
         result[key] = value*100.0/frequency_total
     return result
 
+# Populates _traditional_frequency_table and _simplified_frequency_table
+# if their respective files exist
 def read_standard_frequency_tables():
-    result = {}
     traditional_frequency_path = os.path.join(
         os.path.dirname(__file__),
         'zhonglib-data',
         'traditional-frequencies.txt'
     )
+    global _traditional_frequency_table
     if os.path.exists(traditional_frequency_path):
-       result.update(read_frequency_table(traditional_frequency_path))
+        _traditional_frequency_table = read_frequency_table(traditional_frequency_path)
+    else:
+        _traditional_frequency_table = None
 
     simplified_frequency_path = os.path.join(
         os.path.dirname(__file__),
         'zhonglib-data',
         'simplified-frequencies.txt'
     )
+    global _simplified_frequency_table
     if os.path.exists(simplified_frequency_path):
-        result.update(read_frequency_table(simplified_frequency_path))
+        _simplified_frequency_table = read_frequency_table(simplified_frequency_path)
+    else:
+        _simplified_frequency_table = None
 
-    return result
 
-_standard_frequency_table = read_standard_frequency_tables()
+read_standard_frequency_tables()
 
 #==============================================================================
 # Decomposition 
