@@ -704,7 +704,7 @@ def print_debug(depth, *args):
 #
 # This is a recursive function. The last two parameters are used for recursion
 # and should not be used by client code.
-def get_chunks(text, start_idx, dictionary, max_key_length, chunk_length=3, depth=0):
+def get_chunks(text, start_idx, dictionary, max_word_length, chunk_length=3, depth=0):
     #print_debug(depth, 'get_chunks: enter')
     #print_debug(depth, 'text: "%s"'%text)
     if chunk_length == 0:
@@ -716,7 +716,7 @@ def get_chunks(text, start_idx, dictionary, max_key_length, chunk_length=3, dept
 
     # Get first words
     first_words = []
-    last_idx = min(len(text), start_idx+max_key_length)
+    last_idx = min(len(text), start_idx+max_word_length)
 
     if start_idx == last_idx:
         # No more input left
@@ -751,7 +751,7 @@ def get_chunks(text, start_idx, dictionary, max_key_length, chunk_length=3, dept
             text,
             start_idx+len(first_word),
             dictionary,
-            max_key_length,
+            max_word_length,
             chunk_length-1,
             depth+1
         )
@@ -767,10 +767,10 @@ def get_chunks(text, start_idx, dictionary, max_key_length, chunk_length=3, dept
 def chunk_length(chunk_list):
     return reduce(lambda total, chunk: total+len(chunk), chunk_list, 0)
 
-def get_next_word(text, idx, dictionary, max_key_length):
+def get_next_word(text, idx, dictionary, max_word_length):
     
     #print 'get_next_word: text=%s idx=%s'%(text,idx)
-    candidates = get_chunks(text, idx, dictionary, max_key_length)
+    candidates = get_chunks(text, idx, dictionary, max_word_length)
 
     #print 'get_next_word: candidates=', list_to_uc(candidates)
     if len(candidates) == 0:
@@ -807,12 +807,12 @@ def get_next_word(text, idx, dictionary, max_key_length):
 
 # Segments a contiguous string of characters; that is, it must not contain
 # any punctuation or whitespace.
-def segment_contiguous(text, dictionary, max_key_length):
+def segment_contiguous(text, dictionary, max_word_length):
     result = []
     idx = 0
     #print 'text:',text
     while idx < len(text):
-        next_word = get_next_word(text, idx, dictionary, max_key_length)
+        next_word = get_next_word(text, idx, dictionary, max_word_length)
         #print 'next_word:',next_word
         if next_word == None:
             raise DecompositionError(text)
@@ -848,11 +848,11 @@ def split_into_contiguous(text):
 # primary segmentation points.  After that, each contiguous string of
 # characters is segmented using 'segment_contiguous.'
 
-def segment(text, dictionary=None, max_key_length=None):
+def segment(text, dictionary=None, max_word_length=None):
     if dictionary == None:
         dictionary = standard_dictionary()
-        max_key_length = 9  # Fix this. It should be based on dictionary contents.
+        max_word_length = 9  # Fix this. It should be based on dictionary contents.
     result = []
     for c in split_into_contiguous(text):
-        result += segment_contiguous(c, dictionary, max_key_length)
+        result += segment_contiguous(c, dictionary, max_word_length)
     return result
