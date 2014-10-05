@@ -368,14 +368,18 @@ class Dictionary:
                 ));
             return return_value
 
-    def __contains__(self, key):
+    def has_word(self, character_set, key):
+        assert character_set & TRADITIONAL or character_set & SIMPLIFIED
         with self._index.searcher() as searcher:
+            query = NullQuery()
             # Documentation for Whoosh says 'in'
             # operator can be used on the searcher
             # to look for the key but it didn't work
             # for me.
-            query = Term("traditional", key) \
-                    | Term('simplified', key)
+            if character_set & TRADITIONAL:
+                query |= Term("traditional", key)
+            if character_set & SIMPLIFIED:
+                query |= Term('simplified', key)
             results = searcher.search(query)
             return len(results) > 0
 
@@ -442,12 +446,15 @@ def read_standard_frequency_tables():
 
 read_standard_frequency_tables()
 
-def character_frequency(character_set, ch):
+def get_frequency_table(character_set):
     assert character_set == SIMPLIFIED or character_set == TRADITIONAL
     if character_set == SIMPLIFIED:
-        return __simplified_frequency_table[ch]
+        return __simplified_frequency_table
     else:
-        return __traditional_frequency_table[ch]
+        return __traditional_frequency_table
+
+def character_frequency(character_set, ch):
+    return get_frequency_table(character_set)[ch]
 
 #==============================================================================
 # Decomposition 
@@ -499,11 +506,11 @@ def decompose_word(word):
             result += ch
     return result
 
-def decompose(text, stopAtStrokes=True):
+def decompose(text, character_set, stopAtStrokes=True):
     if len(text) == 1:
         return decompose_character(text, stopAtStrokes)
     else:
-        segments = segment(text)
+        segments = segment(text, character_set)
         if len(segments) == 1:
             word = segments[0]
             return decompose_word(word)
@@ -717,7 +724,7 @@ def print_debug(depth, *args):
 #
 # This is a recursive function. The last two parameters are used for recursion
 # and should not be used by client code.
-def get_chunks(text, start_idx, dictionary, max_word_length, chunk_length=3, depth=0):
+def get_chunks(text, character_set, start_idx, dictionary, max_word_length, chunk_length=3, depth=0):
     #print_debug(depth, 'get_chunks: enter')
     #print_debug(depth, 'text: "%s"'%text)
     if chunk_length == 0:
@@ -745,7 +752,7 @@ def get_chunks(text, start_idx, dictionary, max_word_length, chunk_length=3, dep
         #print_debug(depth, 'end_idx:',end_idx)
         word = text[start_idx:end_idx]
         #print_debug(depth, "word: '%s'"%word)
-        if word in dictionary:
+        if dictionary.has_word(character_set, word):
             first_words.append(word)
 
     if len(first_words) == 0:
@@ -762,6 +769,7 @@ def get_chunks(text, start_idx, dictionary, max_word_length, chunk_length=3, dep
     for first_word in first_words:
         tails = get_chunks(
             text,
+            character_set,
             start_idx+len(first_word),
             dictionary,
             max_word_length,
@@ -780,10 +788,10 @@ def get_chunks(text, start_idx, dictionary, max_word_length, chunk_length=3, dep
 def chunk_length(chunk_list):
     return reduce(lambda total, chunk: total+len(chunk), chunk_list, 0)
 
-def get_next_word(text, idx, dictionary, max_word_length):
+def get_next_word(text, character_set, idx, dictionary, max_word_length, frequency_table):
     
     #print 'get_next_word: text=%s idx=%s'%(text,idx)
-    candidates = get_chunks(text, idx, dictionary, max_word_length)
+    candidates = get_chunks(text, character_set, idx, dictionary, max_word_length)
 
     #print 'get_next_word: candidates=', list_to_uc(candidates)
     if len(candidates) == 0:
@@ -820,12 +828,12 @@ def get_next_word(text, idx, dictionary, max_word_length):
 
 # Segments a contiguous string of characters; that is, it must not contain
 # any punctuation or whitespace.
-def segment_contiguous(text, dictionary, max_word_length):
+def segment_contiguous(text, character_set, dictionary, max_word_length, frequency_table):
     result = []
     idx = 0
     #print 'text:',text
     while idx < len(text):
-        next_word = get_next_word(text, idx, dictionary, max_word_length)
+        next_word = get_next_word(text, character_set, idx, dictionary, max_word_length, frequency_table)
         #print 'next_word:',next_word
         if next_word == None:
             raise DecompositionError(text)
@@ -860,12 +868,16 @@ def split_into_contiguous(text):
 # Segments a piece of text.  Whitespace and punctuation are used as the
 # primary segmentation points.  After that, each contiguous string of
 # characters is segmented using 'segment_contiguous.'
+# 'character_set' is one of TRADITIONAL or SIMPLIFIED.
 
-def segment(text, dictionary=None, max_word_length=None):
+def segment(text, character_set, dictionary=None, max_word_length=None, frequency_table=None):
+    assert character_set == TRADITIONAL or character_set == SIMPLIFIED
     if dictionary == None:
         dictionary = standard_dictionary()
         max_word_length = 9  # Fix this. It should be based on dictionary contents.
+    if frequency_table == None:
+        frequency_table = get_frequency_table(character_set)
     result = []
     for c in split_into_contiguous(text):
-        result += segment_contiguous(c, dictionary, max_word_length)
+        result += segment_contiguous(c, character_set, dictionary, max_word_length, frequency_table)
     return result

@@ -92,11 +92,21 @@ class TestDictionary(unittest.TestCase):
         self.assertEquals([u'门',u'堂',u'节'], result[0].simplified_measure_words)
 
     def test_contains(self):
-        self.assertTrue(u'門' in self._dictionary)
-        self.assertTrue(u'門口' in self._dictionary)
-        self.assertTrue(u'门' in self._dictionary)
-        self.assertTrue(u'门口' in self._dictionary)
-        self.assertFalse('Hello' in self._dictionary)
+        self.assertTrue(self._dictionary.has_word(zl.TRADITIONAL, u'門'))
+        self.assertFalse(self._dictionary.has_word(zl.SIMPLIFIED, u'門'))
+        self.assertTrue(self._dictionary.has_word(zl.TRADITIONAL | zl.SIMPLIFIED, u'門'))
+
+        self.assertFalse(self._dictionary.has_word(zl.TRADITIONAL, u'门'))
+        self.assertTrue(self._dictionary.has_word(zl.SIMPLIFIED, u'门'))
+        self.assertTrue(self._dictionary.has_word(zl.TRADITIONAL | zl.SIMPLIFIED, u'门'))
+
+        self.assertTrue(self._dictionary.has_word(zl.TRADITIONAL, u'門口'))
+        self.assertFalse(self._dictionary.has_word(zl.TRADITIONAL, u'门口'))
+
+        self.assertFalse(self._dictionary.has_word(zl.SIMPLIFIED, u'門口'))
+        self.assertFalse(self._dictionary.has_word(zl.TRADITIONAL, u'门口'))
+
+        self.assertFalse(self._dictionary.has_word(zl.TRADITIONAL, u'Hello'))
 
 if __name__ == '__main__':
     unittest.main()

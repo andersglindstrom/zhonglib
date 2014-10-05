@@ -33,40 +33,40 @@ class TestDecomposition(unittest.TestCase):
         self.assertTrue(4 < s_frequency and s_frequency < 5)
 
     def test_decompose_character(self):
-        decomposition = zl.decompose(u'好')
+        decomposition = zl.decompose(u'好', zl.TRADITIONAL)
         self.assertEquals([u'女', u'子'], decomposition)
 
     def test_decompose_word(self):
-        decomposition = zl.decompose(u'本子')
+        decomposition = zl.decompose(u'本子', zl.TRADITIONAL)
         self.assertEquals([u'本', u'子'], decomposition)
 
     def test_decompose_sentence_1(self):
         # Whitespace ignored
-        decomposition = zl.decompose(u'本  子')
+        decomposition = zl.decompose(u'本  子', zl.TRADITIONAL)
         self.assertEquals([u'本', u'子'], decomposition)
 
     def test_decompose_sentence_2(self):
-        decomposition = zl.decompose(u'門口好像')
+        decomposition = zl.decompose(u'門口好像', zl.TRADITIONAL)
         self.assertEquals([u'門口',u'好像'], decomposition)
 
     def test_decomposition_bug_1(self):
-        decomposition = zl.decompose(u'車')
+        decomposition = zl.decompose(u'車', zl.TRADITIONAL)
         self.assertEqual([u'二',u'丨',u'日'], decomposition)
 
     def test_decomposition_bug_2(self):
-        decomposition = zl.decompose(u'胖')
+        decomposition = zl.decompose(u'胖', zl.TRADITIONAL)
         self.assertEqual([u'月', u'半'], decomposition)
 
     def _test_decomposition_bug_3(self):
-        decomposition = zl.decompose(u'中山路')
+        decomposition = zl.decompose(u'中山路', zl.TRADITIONAL)
         self.assertEqual([u'中山', u'路'], decomposition)
 
     def test_decomposition_bug_4(self):
-        decomposition = zl.decompose(u'條')
+        decomposition = zl.decompose(u'條', zl.TRADITIONAL)
         self.assertEqual([u'亻', u'丨', u'条'], decomposition)
 
     def _test_decomposition_bug_5(self):
-        decomposition = zl.decompose(u'上星期天')
+        decomposition = zl.decompose(u'上星期天', zl.TRADITIONAL)
         self.assertEqual([u'上', u'星期天'], decomposition)
 
 if __name__ == '__main__':
