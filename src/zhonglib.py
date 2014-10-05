@@ -389,8 +389,10 @@ def find(word, traditional=False,simplified=False,meaning=False):
 
 #==============================================================================
 # Character frequency data
+
 def read_frequency_table(file_name):
     result = {}
+    frequency_total = 0
     with codecs.open(file_name, 'r', encoding='utf-8') as f:
         for line in f:
             words = line.split(' ')
@@ -398,25 +400,33 @@ def read_frequency_table(file_name):
             word = words[0]
             frequency = int(words[1])
             result[word] = frequency
+            frequency_total += frequency
+    # Normalise to 100
+    for key, value in result.iteritems():
+        result[key] = value*100.0/frequency_total
     return result
 
-__traditional_frequencies = None
-__traditional_frequency_path = os.path.join(
-    os.path.dirname(__file__),
-    'zhonglib-data',
-    'tradition-frequencies.txt'
-)
-if os.path.exists(__traditional_frequency_path):
-    __traditional_frequencies = read_frequency_table(__traditional_frequency_path)
+def read_standard_frequency_tables():
+    result = {}
+    traditional_frequency_path = os.path.join(
+        os.path.dirname(__file__),
+        'zhonglib-data',
+        'traditional-frequencies.txt'
+    )
+    if os.path.exists(traditional_frequency_path):
+       result.update(read_frequency_table(traditional_frequency_path))
 
-__simplified_frequencies = None
-__simplified_frequency_path = os.path.join(
-    os.path.dirname(__file__),
-    'zhonglib-data',
-    'tradition-frequencies.txt'
-)
-if os.path.exists(__simplified_frequency_path):
-    __simplified_frequencies = read_frequency_table(__simplified_frequency_path)
+    simplified_frequency_path = os.path.join(
+        os.path.dirname(__file__),
+        'zhonglib-data',
+        'simplified-frequencies.txt'
+    )
+    if os.path.exists(simplified_frequency_path):
+        result.update(read_frequency_table(simplified_frequency_path))
+
+    return result
+
+_standard_frequency_table = read_standard_frequency_tables()
 
 #==============================================================================
 # Decomposition 
