@@ -347,8 +347,8 @@ class Dictionary:
     # the English text will be searched too.
     # At least of of 'character_set' or 'include_english' must be provided.
 
-    def find(self, search_string, character_set, include_english=False):
-        assert character_set or meaning
+    def find(self, search_string, character_set=0, include_english=False):
+        assert character_set or include_english
         with self._index.searcher() as searcher:
             query = NullQuery()
             if character_set & TRADITIONAL:
