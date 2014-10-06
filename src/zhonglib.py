@@ -802,14 +802,16 @@ def get_next_word(text, character_set, idx, dictionary, max_word_length, frequen
     #print 'get_next_word: text=%s idx=%s'%(text,idx)
     candidates = get_chunks(text, character_set, idx, dictionary, max_word_length)
 
-    #print 'get_next_word: candidates=', list_to_uc(candidates)
+    ##print 'get_next_word: candidates=', list_to_uc(candidates)
     if len(candidates) == 0:
         return None
 
     if len(candidates) == 1:
         # No ambiguities.  Choose the first chunk of the only candidate.
+        #print 'get_next_word: no ambiguity'
         return candidates[0][0]
 
+    #print 'get_next_word: invoking first rule'
     # There is more than one candidate. Use Rule 1, which is to pick the
     # chunk with biggest number of characters in it and then to pick the
     # first word.
@@ -818,6 +820,7 @@ def get_next_word(text, character_set, idx, dictionary, max_word_length, frequen
 
     if len(candidates) == 1:
         # No ambiguities.  Choose the first chunk of the only candidate.
+        #print 'get_next_word: first rule successful'
         return candidates[0][0]
 
     # All candidates have the same number of characters.  Now choose the one
@@ -825,18 +828,22 @@ def get_next_word(text, character_set, idx, dictionary, max_word_length, frequen
     # number of characters, this is the same as choosing the chunk list with
     # the smallest number of words in it.
 
+    #print 'get_next_word: invoking second rule, candidates=', candidates
     min_avg_length = min(map(lambda c: len(c), candidates))
     candidates = filter(lambda c: len(c) == min_avg_length, candidates)
 
     if len(candidates) == 1:
         # No ambiguities.  Choose the first chunk of the only candidate.
+        #print 'get_next_word: second rule successful'
         return candidates[0][0]
 
+    #print 'get_next_word: invoking fourth rule'
     max_morphic_freedom = max(map(lambda c: morphic_freedom(c, character_set, frequency_table), candidates))
     candidates = filter(lambda c: morphic_freedom(c, character_set, frequency_table) == max_morphic_freedom, candidates)
 
     if len(candidates) == 1:
         # No ambiguities.  Choose the first chunk of the only candidate.
+        #print 'get_next_word: second rule successful'
         return candidates[0][0]
 
     #print 'get_next_word: ambiguity not resolved, candidates=',list_to_uc(candidates)
