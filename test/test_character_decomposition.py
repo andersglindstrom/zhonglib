@@ -34,8 +34,10 @@ class TestCharacterDecomposition(unittest.TestCase):
         return self._decomposer.decompose(ch)
 
     def test_none(self):
-        with self.assertRaises(zl.ZhonglibException):
-            self.decompose(None)
+        with self.assertRaises(zl.ZhonglibException) as cm:
+            self.decompose(u'行')
+        exception = cm.exception
+        self.assertEqual(u'No decomposition data for "行"', exception.message)
 
     def test_level_zero(self):
         # Test a simple character that has no children components.

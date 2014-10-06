@@ -138,7 +138,8 @@ class CharacterDecomposer:
     def decompose(self, ch):
         try:
             record = self._decomp_table[ch]
-        except KeyError: raise ZhonglibException('No decomposition data for ' + repr(ch))
+        except KeyError:
+            raise ZhonglibException(u'No decomposition data for "%s"'%ch)
 
         relation_type = record_relation_type(record)
         if relation_type == COMPOSED_OF:
