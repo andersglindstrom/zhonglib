@@ -838,8 +838,13 @@ def get_next_word(text, character_set, idx, dictionary, max_word_length, frequen
         return candidates[0][0]
 
     #print 'get_next_word: invoking fourth rule'
-    max_morphic_freedom = max(map(lambda c: morphic_freedom(c, character_set, frequency_table), candidates))
-    candidates = filter(lambda c: morphic_freedom(c, character_set, frequency_table) == max_morphic_freedom, candidates)
+    max_morphic_freedom = max(map(
+        lambda c: morphic_freedom(c, character_set, frequency_table),
+        candidates
+    ))
+    candidates = filter(
+        lambda c: morphic_freedom(c, character_set, frequency_table) == max_morphic_freedom,
+        candidates)
 
     if len(candidates) == 1:
         # No ambiguities.  Choose the first chunk of the only candidate.
