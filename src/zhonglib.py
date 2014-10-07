@@ -908,5 +908,17 @@ def segment(text, character_set, dictionary=None, max_word_length=None, frequenc
         frequency_table = get_frequency_table(character_set)
     result = []
     for c in split_into_contiguous(text):
-        result += segment_contiguous(c, character_set, dictionary, max_word_length, frequency_table)
+        result += segment_contiguous(
+            c,
+            character_set,
+            dictionary,
+            max_word_length,
+            frequency_table
+        )
     return result
+
+def __topological_sort(graph):
+    pass
+
+def topological_sort(graph):
+    return []
