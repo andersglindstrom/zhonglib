@@ -928,10 +928,13 @@ def __topological_visit(graph, node, result, marked, tmp_marked):
         __topological_visit(graph, dependency, result, marked, tmp_marked)
     tmp_marked.remove(node)
     marked.add(node)
-    result.insert(0, node)
+    result.append(node)
 
 # 'graph' must be a dictionary where each key is a node and the entry for
 # that node is a list of other nodes on which it is dependent.
+# The return value is a list of the nodes sorted topologically with independent
+# notes coming first. Each node is guaranteed to be preceded by all of its
+# dependencies.
 def topological_sort(graph):
     result = []
     marked = set()
