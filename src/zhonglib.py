@@ -917,8 +917,25 @@ def segment(text, character_set, dictionary=None, max_word_length=None, frequenc
         )
     return result
 
-def __topological_sort(graph):
-    pass
+# Helper function for topological_sort below.
+def __topological_visit(graph, node, result, marked, tmp_marked):
+    if node in tmp_marked:
+        raise ZhonglibException("The graph has a cycle.")
+    if node in marked:
+        return
+    tmp_marked.add(node)
+    for dependency in graph[node]:
+        __topological_visit(graph, dependency, result, marked, tmp_marked)
+    tmp_marked.remove(node)
+    marked.add(node)
+    result.insert(0, node)
 
+# 'graph' must be a dictionary where each key is a node and the entry for
+# that node is a list of other nodes on which it is dependent.
 def topological_sort(graph):
-    return []
+    result = []
+    marked = set()
+    tmp_marked = set()
+    for node in graph:
+        __topological_visit(graph, node, result, marked, tmp_marked)
+    return result
