@@ -6,6 +6,7 @@ import operator
 import codecs
 import string
 import math
+import unicodedata
 
 # Constants
 
@@ -875,19 +876,16 @@ def split_into_contiguous(text):
     current_word = ''
     state = 1
     for ch in text:
+        is_punctuation = unicodedata.category(unicode(ch)).startswith('P')
         if state == 1:
-            if ch.isspace()\
-            or is_symbol_or_punctuation(ch)\
-            or ch in string.punctuation:
+            if ch.isspace() or is_punctuation:
                 state = 2
                 result.append(current_word)
                 current_word = ''
             else:
                 current_word += ch
         elif state == 2:
-            if not ch.isspace()\
-            and not is_symbol_or_punctuation(ch)\
-            and not ch in string.punctuation:
+            if not ch.isspace() and not is_punctuation:
                 current_word += ch
                 state = 1
     if len(current_word) > 0:

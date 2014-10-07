@@ -150,7 +150,7 @@ class TestSegmentation(unittest.TestCase):
         self.assertEqual(3, zl.chunk_length(['AA', 'B']))
         self.assertEqual(6, zl.chunk_length(['AA', 'B', 'CCC']))
 
-    def test_split_into_contiguous(self):
+    def test_split_into_contiguous_1(self):
         self.assertEqual(
             ['AB','CD'],
             zl.split_into_contiguous('AB CD')
@@ -162,6 +162,12 @@ class TestSegmentation(unittest.TestCase):
         self.assertEqual(
             [u'AB',u'CD'],
             zl.split_into_contiguous(u'AB。。CD    ')
+        )
+
+    def test_split_into_contiguous_2(self):
+        self.assertEqual(
+            [u'所謂布施者', u'必獲其利益'],
+            zl.split_into_contiguous(u'所謂布施者，必獲其利益，')
         )
 
     def test_segmentation_1(self):
