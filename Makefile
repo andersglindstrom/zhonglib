@@ -12,7 +12,7 @@ ${DICTIONARY_DIR}:	${DICTIONARY_FILE}
 	src/mkfulldict.py ${DICTIONARY_FILE} ${DICTIONARY_DIR}
 
 .PHONY:	install
-install:
+install:	all
 	# Make the install directory
 	mkdir -p ${INSTALL_DIR}
 
@@ -27,3 +27,7 @@ install:
 
 	# Copy data files
 	cp -r src/zhonglib-data ${INSTALL_DIR}
+
+.PHONY:	nuke
+nuke:
+	rm -rf src/zhonglib-data/dictionary
