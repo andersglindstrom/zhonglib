@@ -74,5 +74,11 @@ class TestDecomposition(unittest.TestCase):
         decomposition = zl.decompose(u'上星期天', zl.TRADITIONAL)
         self.assertEqual([u'上', u'星期天'], decomposition)
 
+    def _test_decomposition_bug_6(self):
+        # This example exercises the morphic freedom rule, which used not
+        # to be implemented.
+        decomposition = zl.decompose(u'睡得着', zl.TRADITIONAL)
+        self.assertEqual([u'睡得着'], decomposition)
+
 if __name__ == '__main__':
     unittest.main()

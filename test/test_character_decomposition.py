@@ -80,20 +80,11 @@ class TestCharacterDecomposition(unittest.TestCase):
 
     def test_standard_decomposer_2(self):
         # Should ignore strokes
-        decomposition = zl.decompose_character(u'几', flatten=True, stopAtStrokes=True)
+        decomposition = zl.decompose_character(u'乜', flatten=True, stop_at_strokes=True)
         self.assertEquals([], decomposition)
 
-        decomposition = zl.decompose_character(u'几', flatten=True, stopAtStrokes=False)
-        self.assertEquals([u'㇓', u'㇠'], decomposition)
-
-    def test_standard_decomposer_3(self):
-        # Should ignore strokes
-        decomposition = zl.decompose_character(u'子', flatten=True, stopAtStrokes=True)
-        self.assertEquals([], decomposition)
-
-        decomposition = zl.decompose_character(u'子', flatten=True, stopAtStrokes=False)
-        # The second character below is, in fact, a stroke and not 'yi'
-        self.assertEquals([u'了', u'㇐'], decomposition)
+        decomposition = zl.decompose_character(u'乜', flatten=True, stop_at_strokes=False)
+        self.assertEquals([u'㇟', u'㇆'], decomposition)
 
 if __name__ == '__main__':
     unittest.main()
