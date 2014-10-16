@@ -80,5 +80,10 @@ class TestDecomposition(unittest.TestCase):
         decomposition = zl.decompose(u'爱情', zl.SIMPLIFIED)
         self.assertEqual([u'爱',u'情'], decomposition)
 
+    def test_decomposition_bug_7(self):
+        # Should ignore non-Chinese characters.
+        decomposition = zl.decompose(u'1. 你好', zl.SIMPLIFIED)
+        self.assertEqual([u'你',u'好'], decomposition)
+
 if __name__ == '__main__':
     unittest.main()

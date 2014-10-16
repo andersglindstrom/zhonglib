@@ -726,9 +726,9 @@ def print_debug(depth, *args):
 # and should not be used by client code.
 def get_chunks(text, character_set, start_idx, dictionary, max_word_length, chunk_length=3, depth=0):
     #print_debug(depth, 'get_chunks: enter')
-    #print_debug(depth, 'text: "%s"'%text)
+    #print_debug(depth, 'text: "%s"'%text[start_idx:])
     if chunk_length == 0:
-        #print_debug(depth, 'get_chunks: exit(1)')
+        #print_debug(depth, 'get_chunks: chunk length is 0, returning [[]]')
         # A list length of 0 mean there is only one possible list, the empty
         # list. This is not the same as no chunk list. See below when there
         # are no matching words.
@@ -740,7 +740,7 @@ def get_chunks(text, character_set, start_idx, dictionary, max_word_length, chun
 
     if start_idx == last_idx:
         # No more input left
-        #print_debug(depth, 'no input left')
+        #print_debug(depth, 'no input left, returning [[]]')
         # If there is no more input, the empty list is the only possible chunk
         # list. This is not the same as no chunk list. See below when there
         return [[]]
@@ -749,15 +749,19 @@ def get_chunks(text, character_set, start_idx, dictionary, max_word_length, chun
     # and also not exceeding the available input.
     #print_debug(depth, 'start_idx: %s last_idx: %s'%(start_idx,last_idx))
     for end_idx in xrange(start_idx+1, last_idx+1):
-        #print_debug(depth, 'end_idx:',end_idx)
+        ##print_debug(depth, 'end_idx:',end_idx)
         word = text[start_idx:end_idx]
-        #print_debug(depth, "word: '%s'"%word)
+        #print_debug(depth, "potential word: '%s'"%word)
         if dictionary.has_word(character_set, word):
+            #print_debug(depth+1, "'%s' found in dictionary"%word)
             first_words.append(word)
+        else:
+            pass
+            #print_debug(depth+1, "'%s' not found in dictionary"%word)
 
-    #print_debug(depth, 'first_words:', first_words, ' len(first_words): ', len(first_words))
+    #print_debug(depth, 'first_words:', list_to_uc(first_words))
     if len(first_words) == 0:
-        #print_debug(depth, 'get_chunks: exit(2)')
+        #print_debug(depth, 'get_chunks: there are no words at start of text, returning []')
         # None of the input could be matched to any words. There are no
         # chunk lists.
         return []
@@ -766,8 +770,8 @@ def get_chunks(text, character_set, start_idx, dictionary, max_word_length, chun
     # chunk lists for the remaining input.  Once that's done, for every following
     # chunk list, create a new one that prepends the first word.
     result = []
-    ##print_debug(depth, 'first_words:', list_to_uc(first_words))
     for first_word in first_words:
+        #print_debug(depth, "getting tails for '%s'"%first_word)
         tails = get_chunks(
             text,
             character_set,
@@ -777,11 +781,11 @@ def get_chunks(text, character_set, start_idx, dictionary, max_word_length, chun
             chunk_length-1,
             depth+1
         )
-        #print_debug(depth, "first_word: '%s' tails: %s"%(first_word,list_to_uc(tails)))
+        #print_debug(depth, "tails for '%s': %s"%(first_word,list_to_uc(tails)))
         for tail in tails:
             result.append([first_word] + tail)
 
-    #print_debug(depth, 'get_chunks: exit(3)')
+    #print_debug(depth, 'get_chunks: returning ', list_to_uc(result))
     return result
 
 # The length of a chunk is the total number of characters in the chunk. It is
@@ -875,23 +879,30 @@ def segment_contiguous(text, character_set, dictionary, max_word_length, frequen
 
 def split_into_contiguous(text):
     result = []
-    current_word = ''
-    state = 1
+    current_section = ''
+    state = 0
     for ch in text:
+        is_cjk = is_cjk_character(ch)
         is_punctuation = unicodedata.category(unicode(ch)).startswith('P')
-        if state == 1:
-            if ch.isspace() or is_punctuation:
+        if state == 0:  # For first character only.
+            if ch.isspace() or is_punctuation or not is_cjk:
                 state = 2
-                result.append(current_word)
-                current_word = ''
             else:
-                current_word += ch
-        elif state == 2:
-            if not ch.isspace() and not is_punctuation:
-                current_word += ch
+                current_section += ch
                 state = 1
-    if len(current_word) > 0:
-        result.append(current_word)
+        elif state == 1:    # Gathering current section
+            if ch.isspace() or is_punctuation or not is_cjk:
+                state = 2
+                result.append(current_section)
+                current_section = ''
+            else:
+                current_section += ch
+        elif state == 2:    # Ignoring text
+            if not ch.isspace() and not is_punctuation and is_cjk:
+                current_section += ch
+                state = 1
+    if len(current_section) > 0:
+        result.append(current_section)
     return result
 
 # Segments a piece of text.  Whitespace and punctuation are used as the
