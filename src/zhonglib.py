@@ -725,10 +725,10 @@ def print_debug(depth, *args):
 # This is a recursive function. The last two parameters are used for recursion
 # and should not be used by client code.
 def get_chunks(text, character_set, start_idx, dictionary, max_word_length, chunk_length=3, depth=0):
-    print_debug(depth, 'get_chunks: enter')
-    print_debug(depth, 'text: "%s"'%text)
+    #print_debug(depth, 'get_chunks: enter')
+    #print_debug(depth, 'text: "%s"'%text)
     if chunk_length == 0:
-        print_debug(depth, 'get_chunks: exit(1)')
+        #print_debug(depth, 'get_chunks: exit(1)')
         # A list length of 0 mean there is only one possible list, the empty
         # list. This is not the same as no chunk list. See below when there
         # are no matching words.
@@ -740,23 +740,24 @@ def get_chunks(text, character_set, start_idx, dictionary, max_word_length, chun
 
     if start_idx == last_idx:
         # No more input left
-        print_debug(depth, 'no input left')
+        #print_debug(depth, 'no input left')
         # If there is no more input, the empty list is the only possible chunk
         # list. This is not the same as no chunk list. See below when there
         return [[]]
 
     # Find all words at the start of the input up to the max key length
     # and also not exceeding the available input.
-    print_debug(depth, 'start_idx: %s last_idx: %s'%(start_idx,last_idx))
-    for end_idx in xrange(start_idx, last_idx+1):
-        print_debug(depth, 'end_idx:',end_idx)
+    #print_debug(depth, 'start_idx: %s last_idx: %s'%(start_idx,last_idx))
+    for end_idx in xrange(start_idx+1, last_idx+1):
+        #print_debug(depth, 'end_idx:',end_idx)
         word = text[start_idx:end_idx]
-        print_debug(depth, "word: '%s'"%word)
+        #print_debug(depth, "word: '%s'"%word)
         if dictionary.has_word(character_set, word):
             first_words.append(word)
 
+    #print_debug(depth, 'first_words:', first_words, ' len(first_words): ', len(first_words))
     if len(first_words) == 0:
-        print_debug(depth, 'get_chunks: exit(2)')
+        #print_debug(depth, 'get_chunks: exit(2)')
         # None of the input could be matched to any words. There are no
         # chunk lists.
         return []
@@ -765,7 +766,7 @@ def get_chunks(text, character_set, start_idx, dictionary, max_word_length, chun
     # chunk lists for the remaining input.  Once that's done, for every following
     # chunk list, create a new one that prepends the first word.
     result = []
-    print_debug(depth, 'first_words:', list_to_uc(first_words))
+    ##print_debug(depth, 'first_words:', list_to_uc(first_words))
     for first_word in first_words:
         tails = get_chunks(
             text,
@@ -776,11 +777,11 @@ def get_chunks(text, character_set, start_idx, dictionary, max_word_length, chun
             chunk_length-1,
             depth+1
         )
-        print_debug(depth, "first_word: '%s' tails: %s"%(first_word,list_to_uc(tails)))
+        #print_debug(depth, "first_word: '%s' tails: %s"%(first_word,list_to_uc(tails)))
         for tail in tails:
             result.append([first_word] + tail)
 
-    print_debug(depth, 'get_chunks: exit(3)')
+    #print_debug(depth, 'get_chunks: exit(3)')
     return result
 
 # The length of a chunk is the total number of characters in the chunk. It is
