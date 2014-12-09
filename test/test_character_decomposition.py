@@ -80,7 +80,8 @@ class TestCharacterDecomposition(unittest.TestCase):
         self.assertFalse('z' in self._decomposer)
 
     def test_getitem(self):
-        pass
+        self.assertEquals(self._character_m, self._decomposer['m'])
+        self.assertEquals(self._character_n, self._decomposer['n'])
 
     def test_standard_decomposer_1(self):
         decomposition = zl.decompose_character(u'好', flatten=True)
