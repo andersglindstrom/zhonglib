@@ -75,6 +75,9 @@ class CharacterDecomposer:
         self._load_decomposition_data()
 
 
+    def __contains__(self, ch):
+        return ch in self._decomp_table
+
     # Returns a 4-tuple representing the relation between a node ID
     # and a referent.
     #   1. The node ID. If the node ID has length one, it is considered to represent
