@@ -142,7 +142,7 @@ class CharacterDecomposer:
 
     # Returns a tree. Symbolic references between nodes are resolved
     # into direct references so forming a recursive data structure.
-    def decompose(self, ch):
+    def decomposition_tree(self, ch):
         try:
             record = self._decomp_table[ch]
         except KeyError:
@@ -159,7 +159,7 @@ class CharacterDecomposer:
                     record_id(record),
                     record_type(record),
                     record_relation_type(record),
-                    [self.decompose(i) for i in component_ids]
+                    [self.decomposition_tree(i) for i in component_ids]
                 )
         else:
             assert(relation_type == VARIANT_OF)
@@ -168,7 +168,7 @@ class CharacterDecomposer:
                 record_id(record),
                 record_type(record),
                 record_relation_type(record),
-                self.decompose(record_referent(record))
+                self.decomposition_tree(record_referent(record))
             )
 
     def __str__(self):
@@ -471,7 +471,7 @@ __standard_decomposer = CharacterDecomposer(os.path.join(
 ))
 
 def decompose_character(character, flatten=True, stop_at_strokes=True):
-    decomposition = __standard_decomposer.decompose(character)
+    decomposition = __standard_decomposer.decomposition_tree(character)
     if flatten:
         decomposition = flatten_decomposition(decomposition, stop_at_strokes)
     return decomposition

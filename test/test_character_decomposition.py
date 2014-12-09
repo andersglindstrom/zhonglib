@@ -30,41 +30,41 @@ class TestCharacterDecomposition(unittest.TestCase):
                                 'test_decomposition_data.txt')
         self._decomposer = zl.CharacterDecomposer(decomp_data_file)
 
-    def decompose(self, ch):
-        return self._decomposer.decompose(ch)
+    def decomposition_tree(self, ch):
+        return self._decomposer.decomposition_tree(ch)
 
     def test_none(self):
         with self.assertRaises(zl.ZhonglibException) as cm:
-            self.decompose(u'行')
+            self.decomposition_tree(u'行')
         exception = cm.exception
         self.assertEqual(u'No decomposition data for "行"', exception.message)
 
     def test_level_zero(self):
         # Test a simple character that has no children components.
-        self.assertEqual(self._character_n, self.decompose('n'))
+        self.assertEqual(self._character_n, self.decomposition_tree('n'))
 
     def test_level_one_character(self):
-        self.assertEqual(self._character_r, self.decompose('r'))
+        self.assertEqual(self._character_r, self.decomposition_tree('r'))
 
     def test_level_two_character(self):
-        self.assertEqual(self._character_s, self.decompose('s'))
+        self.assertEqual(self._character_s, self.decomposition_tree('s'))
 
     def test_level_one_group(self):
-        self.assertEqual(self._group_1, self.decompose('1'))
+        self.assertEqual(self._group_1, self.decomposition_tree('1'))
 
     def test_character_composed_of_group(self):
-        self.assertEqual(self._character_t, self.decompose('t'))
+        self.assertEqual(self._character_t, self.decomposition_tree('t'))
 
     def test_variant(self):
-        self.assertEqual(self._character_u, self.decompose('u'))
+        self.assertEqual(self._character_u, self.decomposition_tree('u'))
 
     def test_group_with_group(self):
-        self.assertEqual(self._group_2, self.decompose('2'))
+        self.assertEqual(self._group_2, self.decomposition_tree('2'))
 
     def test_utf8(self):
-        self.assertEqual(self._character_zi, self.decompose(u'子'))
-        self.assertEqual(self._character_nu, self.decompose(u'女'))
-        self.assertEqual(self._character_hao, self.decompose(u'好'))
+        self.assertEqual(self._character_zi, self.decomposition_tree(u'子'))
+        self.assertEqual(self._character_nu, self.decomposition_tree(u'女'))
+        self.assertEqual(self._character_hao, self.decomposition_tree(u'好'))
 
     def test_flatten_decomposition(self):
         self.assertEquals([], zl.flatten_decomposition(self._character_m))
