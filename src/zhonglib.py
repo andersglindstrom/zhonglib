@@ -476,6 +476,12 @@ def decompose_character(character, flatten=True, stop_at_strokes=True):
         decomposition = flatten_decomposition(decomposition, stop_at_strokes)
     return decomposition
 
+def any_are_strokes(characters):
+    for c in characters:
+        if is_stroke(c):
+            return True
+    return False
+
 def flatten_one_level_down(record, stop_at_strokes=True):
     if record_type(record) == CHARACTER:
         return record_id(record)
@@ -486,11 +492,9 @@ def flatten_one_level_down(record, stop_at_strokes=True):
         result += flatten_one_level_down(child)
     return result
 
-def any_are_strokes(characters):
-    for c in characters:
-        if is_stroke(c):
-            return True
-    return False
+# Removes and groups by replacing them with their components. The flattening
+# process stops at characters. Characters are not expanded into their components.
+# The return value is just a list of characters, not of decomposition records.
 
 def flatten_decomposition(record, stop_at_strokes=True):
     if record_type(record) == CHARACTER and record_referent(record) == None:
