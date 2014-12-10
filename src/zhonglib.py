@@ -45,6 +45,9 @@ def record_relation_type(record):
 def record_referent(record):
     return record[3]
 
+def record_line_number(record):
+    return record[4]
+
 class ZhonglibException(Exception):
 
     def __init__(self, message):
@@ -101,7 +104,7 @@ class CharacterDecomposer:
     def __iter__(self):
         return self._decomp_table.__iter__()
 
-    # Returns a 4-tuple representing the relation between a node ID
+    # Returns a 5-tuple representing the relation between a node ID
     # and a referent.
     #   1. The node ID. If the node ID has length one, it is considered to represent
     #       a character.  Otherwise, it is a group ID.
@@ -110,7 +113,8 @@ class CharacterDecomposer:
     #   4. The referent in the relation.  Either a single character when the
     #           relation is VARIANT_OF or a list of component characters when the
     #           relation is COMPOSED_OF.
-    def _parse_line(self, line_string):
+    #   5. The line number
+    def _parse_line(self, line_string, line_number):
         split_line = line_string.strip().split(':')
 
         # Extract the four fields as strings
@@ -147,7 +151,7 @@ class CharacterDecomposer:
             if len(referent_string) > 0:
                 referent = referent_string.split(',')
 
-        return (node_id, node_type, relation_type, referent)
+        return (node_id, node_type, relation_type, referent, line_number)
 
     def _load_decomposition_data(self):
         if not os.path.exists(self._file_name):
@@ -155,8 +159,10 @@ class CharacterDecomposer:
             raise ZhonglibException(msg)
 
         with codecs.open(self._file_name, 'r', encoding='utf-8') as f:
+            line_number = 0
             for line in f:
-                record = self._parse_line(line)
+                line_number += 1
+                record = self._parse_line(line, line_number)
                 assert(not record_id(record) in self._decomp_table)
                 self._decomp_table[record_id(record)] = record
 
@@ -179,7 +185,8 @@ class CharacterDecomposer:
                     record_id(record),
                     record_type(record),
                     record_relation_type(record),
-                    [self.decomposition_tree(i) for i in component_ids]
+                    [self.decomposition_tree(i) for i in component_ids],
+                    record_line_number(record)
                 )
         else:
             assert(relation_type == VARIANT_OF)
@@ -188,7 +195,8 @@ class CharacterDecomposer:
                 record_id(record),
                 record_type(record),
                 record_relation_type(record),
-                self.decomposition_tree(record_referent(record))
+                self.decomposition_tree(record_referent(record)),
+                record_line_number(record)
             )
 
     def __str__(self):

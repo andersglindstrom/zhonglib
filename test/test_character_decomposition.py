@@ -9,19 +9,19 @@ class TestCharacterDecomposition(unittest.TestCase):
     # These are the in-memory representations of the decomposition
     # file.
 
-    _character_m    = ('m', zl.CHARACTER, zl.COMPOSED_OF, None)
-    _character_n    = ('n', zl.CHARACTER, zl.COMPOSED_OF, None)
-    _character_p    = ('p', zl.CHARACTER, zl.COMPOSED_OF, None)
-    _character_q    = ('q', zl.CHARACTER, zl.COMPOSED_OF, None)
-    _character_r    = ('r', zl.CHARACTER, zl.COMPOSED_OF, [ _character_m, _character_n, _character_p ])
-    _character_s    = ('s', zl.CHARACTER, zl.COMPOSED_OF, [ _character_r, _character_q ])
-    _group_1        = ('1', zl.GROUP,     zl.COMPOSED_OF, [ _character_p, _character_q ])
-    _character_t    = ('t', zl.CHARACTER, zl.COMPOSED_OF, [ _group_1, _character_n ])
-    _character_u    = ('u', zl.CHARACTER, zl.VARIANT_OF, _character_t )
-    _group_2        = ('2', zl.GROUP,     zl.COMPOSED_OF, [ _character_t, _group_1 ])
-    _character_nu   = (u'女', zl.CHARACTER, zl.COMPOSED_OF, None)
-    _character_zi   = (u'子', zl.CHARACTER, zl.COMPOSED_OF, None)
-    _character_hao  = (u'好', zl.CHARACTER, zl.COMPOSED_OF, [_character_nu, _character_zi])
+    _character_m    = ('m', zl.CHARACTER, zl.COMPOSED_OF, None, 1)
+    _character_n    = ('n', zl.CHARACTER, zl.COMPOSED_OF, None, 2)
+    _character_p    = ('p', zl.CHARACTER, zl.COMPOSED_OF, None, 3)
+    _character_q    = ('q', zl.CHARACTER, zl.COMPOSED_OF, None, 4)
+    _character_r    = ('r', zl.CHARACTER, zl.COMPOSED_OF, [ _character_m, _character_n, _character_p ], 5)
+    _character_s    = ('s', zl.CHARACTER, zl.COMPOSED_OF, [ _character_r, _character_q ], 6)
+    _group_1        = ('1', zl.GROUP,     zl.COMPOSED_OF, [ _character_p, _character_q ], 7)
+    _character_t    = ('t', zl.CHARACTER, zl.COMPOSED_OF, [ _group_1, _character_n ], 8)
+    _character_u    = ('u', zl.CHARACTER, zl.VARIANT_OF, _character_t, 9 )
+    _group_2        = ('2', zl.GROUP,     zl.COMPOSED_OF, [ _character_t, _group_1 ], 10)
+    _character_zi   = (u'子', zl.CHARACTER, zl.COMPOSED_OF, None, 11)
+    _character_nu   = (u'女', zl.CHARACTER, zl.COMPOSED_OF, None, 12)
+    _character_hao  = (u'好', zl.CHARACTER, zl.COMPOSED_OF, [_character_nu, _character_zi], 13)
 
     @classmethod
     def setUpClass(self):
