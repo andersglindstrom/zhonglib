@@ -997,35 +997,46 @@ def __is_id_in_cycle(decomposer, identifier, current_id, visited):
         return True
     if current_id in visited:
         return False
-    visited.add(current_id)
     record = decomposer[current_id]
-    referent = record_referent(record)
-    if not referent:
-        return False
-    if record_type(record) == CHARACTER or record_type(record) == GROUP:
-        for child_id in referent:
-            if __is_id_in_cycle(decomposer, identifier, child_id, visited):
-                return True
-        return False
-    else:
-        assert record_type(record) == VARIANT_OF
-        return __is_id_in_cycle(decomposer, identifier, referent, visited)
+    try:
+        visited.add(current_id)
+        referent = record_referent(record)
+        if not referent:
+            return False
+        if record_type(record) == CHARACTER or record_type(record) == GROUP:
+            for child_id in referent:
+                if __is_id_in_cycle(decomposer, identifier, child_id, visited):
+                    return True
+            return False
+        else:
+            assert record_type(record) == VARIANT_OF
+            return __is_id_in_cycle(decomposer, identifier, referent, visited)
+    except Exception as e:
+        msg = "error for record on line %s: %s, %s"%(record_line_number(record), repr(e), record)
+        raise ZhonglibException(msg)
 
 # identifier can be a character or a group id
 def is_id_in_cycle(decomposer, identifier):
     record = decomposer[identifier]
-    referent = record_referent(record)
-    if not referent:
-        return False
-    visited = set()
-    if record_type(record) == CHARACTER or record_type(record) == GROUP:
-        for child_id in referent:
-            if __is_id_in_cycle(decomposer, identifier, child_id, visited):
-                return True
-        return False
-    else:
-        assert record_type(record) == VARIANT_OF
-        return __is_id_in_cycle(decomposer, identifier, referent, visited)
+    try:
+        referent = record_referent(record)
+        if not referent:
+            return False
+        visited = set()
+        if record_type(record) == CHARACTER or record_type(record) == GROUP:
+            for child_id in referent:
+                if __is_id_in_cycle(decomposer, identifier, child_id, visited):
+                    return True
+            return False
+        else:
+            assert record_type(record) == VARIANT_OF
+            return __is_id_in_cycle(decomposer, identifier, referent, visited)
+    except ZhonglibException:
+        raise
+    except Exception as e:
+        msg = "error for record on line %s: %s, %s"%(record_line_number(record), repr(e), record)
+        raise ZhonglibException(msg)
+
 
 def check_decomposer_for_cycles(decomposer):
     result = []
