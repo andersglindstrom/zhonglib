@@ -98,6 +98,9 @@ class CharacterDecomposer:
     def __getitem__(self, ch):
         return self._decomp_table[ch]
 
+    def __iter__(self):
+        return self._decomp_table.__iter__()
+
     # Returns a 4-tuple representing the relation between a node ID
     # and a referent.
     #   1. The node ID. If the node ID has length one, it is considered to represent
@@ -981,37 +984,41 @@ def topological_sort(graph):
         __topological_visit(graph, node, result, marked, tmp_marked)
     return result
 
-def __is_character_in_cycle(decomposer, ch, current_ch, visited):
-#    print '__is_character_in_cycle: ch=%s current_ch=%s visited=%s'%(ch, current_ch, visited)
-    if ch == current_ch:
+def __is_id_in_cycle(decomposer, identifier, current_id, visited):
+    if identifier == current_id:
         return True
-    if current_ch in visited:
+    if current_id in visited:
         return False
-    visited.add(current_ch)
-    children = record_referent(decomposer[current_ch])
+    visited.add(current_id)
+    children = record_referent(decomposer[current_id])
     if not children:
         return False
     for child_record in children:
-        child_ch = record_id(child_record)
-        if __is_character_in_cycle(decomposer, ch, child_ch, visited):
+        child_id = record_id(child_record)
+        if __is_id_in_cycle(decomposer, identifier, child_id, visited):
             return True
     return False
 
-def is_character_in_cycle(decomposer, ch):
-    children = record_referent(decomposer[ch])
+# identifier can be a character or a group id
+def is_id_in_cycle(decomposer, identifier):
+    children = record_referent(decomposer[identifier])
     if not children:
         return False
     visited = set()
     for child_record in children:
-        child_ch = record_id(child_record)
-        if __is_character_in_cycle(decomposer, ch, child_ch, visited):
+        child_id = record_id(child_record)
+        if __is_id_in_cycle(decomposer, identifier, child_id, visited):
             return True
     return False
 
-def check_decomposer_for_cycles(decomposer, ch):
+def check_decomposer_for_cycles(decomposer):
     result = []
-    for record in decomposer:
-        identifier = record_id(record)
-        if is_character_in_cycle(identifier):
-            result.append(DecompositionCycle(identifier))
+    for identifier in decomposer:
+        record = decomposer[identifier]
+        if is_id_in_cycle(decomposer, identifier):
+            if record_type(record) == CHARACTER:
+                msg = '"%s" is in a cycle.'%identifier
+            else:
+                msg = 'Group %s is in a cyle.'%identifier
+            result.append(msg)
     return result
