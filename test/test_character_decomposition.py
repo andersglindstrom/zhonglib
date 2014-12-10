@@ -88,11 +88,7 @@ class TestCharacterDecomposition(unittest.TestCase):
         self.assertEquals([u'女', u'子'], decomposition)
 
     def test_standard_decomposer_2(self):
-        # Should ignore strokes
-        decomposition = zl.decompose_character(u'乜', flatten=True, stop_at_strokes=True)
-        self.assertEquals([], decomposition)
-
-        decomposition = zl.decompose_character(u'乜', flatten=True, stop_at_strokes=False)
+        decomposition = zl.decompose_character(u'乜', flatten=True)
         self.assertEquals([u'㇟', u'㇆'], decomposition)
 
 if __name__ == '__main__':

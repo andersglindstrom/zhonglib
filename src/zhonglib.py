@@ -498,10 +498,10 @@ __standard_decomposer = CharacterDecomposer(os.path.join(
     'decomposition-data.txt'
 ))
 
-def decompose_character(character, flatten=True, stop_at_strokes=True):
+def decompose_character(character, flatten=True):
     decomposition = __standard_decomposer.decomposition_tree(character)
     if flatten:
-        decomposition = flatten_decomposition(decomposition, stop_at_strokes)
+        decomposition = flatten_decomposition(decomposition)
     return decomposition
 
 def any_are_strokes(characters):
@@ -510,7 +510,7 @@ def any_are_strokes(characters):
             return True
     return False
 
-def flatten_one_level_down(record, stop_at_strokes=True):
+def flatten_one_level_down(record):
     if record_type(record) == CHARACTER:
         return record_id(record)
     assert record_type(record) == GROUP
@@ -524,7 +524,7 @@ def flatten_one_level_down(record, stop_at_strokes=True):
 # process stops at characters. Characters are not expanded into their components.
 # The return value is just a list of characters, not of decomposition records.
 
-def flatten_decomposition(record, stop_at_strokes=True):
+def flatten_decomposition(record):
     if record_type(record) == CHARACTER and record_referent(record) == None:
         return []
     if record_type(record) == CHARACTER and record_relation_type(record) == VARIANT_OF:
@@ -533,8 +533,6 @@ def flatten_decomposition(record, stop_at_strokes=True):
     result = []
     for child in children:
         result += flatten_one_level_down(child)
-    if len(result) > 0 and stop_at_strokes and any_are_strokes(result):
-        result = []
     return result
 
 def decompose_word(word):
@@ -544,9 +542,9 @@ def decompose_word(word):
             result += ch
     return result
 
-def decompose(text, character_set, stop_at_strokes=True):
+def decompose(text, character_set):
     if len(text) == 1:
-        return decompose_character(text, stop_at_strokes)
+        return decompose_character(text)
     else:
         segments = segment(text, character_set)
         if len(segments) == 1:
