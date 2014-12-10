@@ -67,6 +67,23 @@ class DecompositionError(ZhonglibException):
     def __str__(self):
         return unicode(self).encode('utf-8')
 
+class DecompositionCycle(ZhonglibException):
+
+    def __init__(self, ch):
+        self.character = ch
+
+    def __eq__(self, other):
+        if not isinstance(DecompositionCycle, other):
+            return False
+        return self.character == other.character
+
+    def __unicode__(self):
+        return u"DecompositionCycle('%s')"%self.character
+
+    def __str__(self):
+        return unicode(self).encode('utf-8')
+
+
 class CharacterDecomposer:
 
     def __init__(self, file_name):
@@ -962,4 +979,39 @@ def topological_sort(graph):
     tmp_marked = set()
     for node in graph:
         __topological_visit(graph, node, result, marked, tmp_marked)
+    return result
+
+def __is_character_in_cycle(decomposer, ch, current_ch, visited):
+#    print '__is_character_in_cycle: ch=%s current_ch=%s visited=%s'%(ch, current_ch, visited)
+    if ch == current_ch:
+        return True
+    if current_ch in visited:
+        return False
+    visited.add(current_ch)
+    children = record_referent(decomposer[current_ch])
+    if not children:
+        return False
+    for child_record in children:
+        child_ch = record_id(child_record)
+        if __is_character_in_cycle(decomposer, ch, child_ch, visited):
+            return True
+    return False
+
+def is_character_in_cycle(decomposer, ch):
+    children = record_referent(decomposer[ch])
+    if not children:
+        return False
+    visited = set()
+    for child_record in children:
+        child_ch = record_id(child_record)
+        if __is_character_in_cycle(decomposer, ch, child_ch, visited):
+            return True
+    return False
+
+def check_decomposer_for_cycles(decomposer, ch):
+    result = []
+    for record in decomposer:
+        identifier = record_id(record)
+        if is_character_in_cycle(identifier):
+            result.append(DecompositionCycle(identifier))
     return result
