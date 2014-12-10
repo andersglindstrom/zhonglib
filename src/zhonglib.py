@@ -990,24 +990,34 @@ def __is_id_in_cycle(decomposer, identifier, current_id, visited):
     if current_id in visited:
         return False
     visited.add(current_id)
-    children = record_referent(decomposer[current_id])
-    if not children:
+    record = decomposer[current_id]
+    referent = record_referent(record)
+    if not referent:
         return False
-    for child_id in children:
-        if __is_id_in_cycle(decomposer, identifier, child_id, visited):
-            return True
-    return False
+    if record_type(record) == CHARACTER or record_type(record) == GROUP:
+        for child_id in referent:
+            if __is_id_in_cycle(decomposer, identifier, child_id, visited):
+                return True
+        return False
+    else:
+        assert record_type(record) == VARIANT_OF
+        return __is_id_in_cycle(decomposer, identifier, referent, visited)
 
 # identifier can be a character or a group id
 def is_id_in_cycle(decomposer, identifier):
-    referent = record_referent(decomposer[identifier])
+    record = decomposer[identifier]
+    referent = record_referent(record)
     if not referent:
         return False
     visited = set()
-    for child_id in referent:
-        if __is_id_in_cycle(decomposer, identifier, child_id, visited):
-            return True
-    return False
+    if record_type(record) == CHARACTER or record_type(record) == GROUP:
+        for child_id in referent:
+            if __is_id_in_cycle(decomposer, identifier, child_id, visited):
+                return True
+        return False
+    else:
+        assert record_type(record) == VARIANT_OF
+        return __is_id_in_cycle(decomposer, identifier, referent, visited)
 
 def check_decomposer_for_cycles(decomposer):
     result = []
