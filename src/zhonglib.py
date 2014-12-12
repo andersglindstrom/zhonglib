@@ -206,51 +206,66 @@ class CharacterDecomposer:
 #http://en.wikipedia.org/wiki/Han_unification
 
 def is_unified_character(ch):
-    return unichr(0x4E00) <= ch and ch <= unichr(0x9FFF)
+    ch_ord = ord(ch)
+    return 0x4E00 <= ch_ord and ch_ord <= 0x9FFF
 
 def is_unified_extension_A_character(ch):
-    return unichr(0x3400) <= ch and ch <= unichr(0x4DBF)
+    ch_ord = ord(ch)
+    return 0x3400 <= ch_ord and ch_ord <= 0x4DBF
 
 def is_unified_extension_B_character(ch):
-    return unichr(0x20000) <= ch and ch <= unichr(0x2A6DF)
+    ch_ord = ord(ch)
+    return 0x20000 <= ch_ord and ch_ord <= 0x2A6DF
 
 def is_unified_extension_C_character(ch):
-    return unichr(0x2A700) <= ch and ch <= unichr(0x2B73F)
+    ch_ord = ord(ch)
+    return 0x2A700 <= ch_ord and ch_ord <= 0x2B73F
 
 def is_unified_extension_D_character(ch):
-    return unichr(0x2B740) <= ch and ch <= unichr(0x2B81F)
+    ch_ord = ord(ch)
+    return 0x2B740 <= ch_ord and ch_ord <= 0x2B81F
 
 def is_supplemental_radical(ch):
     # See http://en.wikipedia.org/wiki/CJK_Radicals_Supplement
-    return unichr(0x2E80) <= ch and ch <= unichr(0x2EFF)
+    ch_ord = ord(ch)
+    return 0x2E80 <= ch_ord and ch_ord <= 0x2EFF
 
 def is_kangxi_radical(ch):
     # See http://en.wikipedia.org/wiki/Kangxi_Radicals#Unicode
-    return unichr(0x2F00) <= ch and ch <= unichr(0x2FDF) 
+    ch_ord = ord(ch)
+    return 0x2F00 <= ch_ord and ch_ord <= 0x2FDF
 
 def is_description_character(ch):
-    return unichr(0x2FF0) <= ch and ch <= unichr(0x2FFF)
+    ch_ord = ord(ch)
+    return 0x2FF0 <= ch_ord and ch_ord <= 0x2FFF
 
 def is_symbol_or_punctuation(ch):
-    return unichr(0x3000) <= ch and ch <= unichr(0x303F)
+    ch_ord = ord(ch)
+    return 0x3000 <= ch_ord and ch_ord <= 0x303F
 
 def is_stroke(ch):
-    return unichr(0x31C0) <= ch and ch <= unichr(0x31EF)
+    ch_ord = ord(ch)
+    return 0x31C0 <= ch_ord and ch_ord <= 0x31EF
 
 def is_enclosed_letter_or_month(ch):
-    return unichr(0x3200) <= ch and ch <= unichr(0x32FF)
+    ch_ord = ord(ch)
+    return 0x3200 <= ch_ord and ch_ord <= 0x32FF
 
 def is_compatibility_character(ch):
-    return unichr(0x3300) <= ch and ch <= unichr(0x33FF)
+    ch_ord = ord(ch)
+    return 0x3300 <= ch_ord and ch_ord <= 0x33FF
 
 def is_compatibility_ideograph(ch):
-    return unichr(0xF900) <= ch and ch <= unichr(0xFAFF)
+    ch_ord = ord(ch)
+    return 0xF900 <= ch_ord and ch_ord <= 0xFAFF
 
 def is_compatibility_form(ch):
-    return unichr(0xFE30) <= ch and ch <= unichr(0xFE4F)
+    ch_ord = ord(ch)
+    return 0xFE30 <= ch_ord and ch_ord <= 0xFE4F
 
 def is_compatibility_ideograph_supplement(ch):
-    return unichr(0x2F800) <= ch and ch <= unichr(0x2FA1F)
+    ch_ord = ord(ch)
+    return 0x2F800 <= ch_ord and ch_ord <= 0x2FA1F
 
 def is_cjk_character(ch):
     return is_unified_character(ch)\
