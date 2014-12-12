@@ -123,12 +123,19 @@ class CharacterDecomposer:
         relation_string = split_line[2]
         referent_string = split_line[3]
 
-        # Turn the strings into binary
-
         # 1. The node type
         node_type = _constant_codes[type_string]
 
-        # 2. The node ID does not need to be parsed
+        # 2. The node ID does not need to be parsed but we do need to make
+        #    some checks.
+        if node_type == CHARACTER and len(node_id) > 1:
+            # The ID must always be one character.  However, because we are
+            # dealing with Unicode, the decoding of the file doesn't always
+            # work correctly. For example, if the Python build is narrow
+            # then it can't represent Unicode characters above 2^32. In that
+            # case, it seems that a two character string is returned.
+            return None
+        # Turn the strings into binary
 
         # 3. The type of relation the node represents
         relation_type = _constant_codes[relation_string]
@@ -139,6 +146,9 @@ class CharacterDecomposer:
         # character. There should only be one character.
         # The referent in this relation is the primary character.
         if relation_type == VARIANT_OF:
+            if len(referent_string) > 1:
+            # See comment for 'node_id' just above
+                return None
             assert(node_type == CHARACTER and len(referent_string) == 1)
             referent = referent_string
         else:
@@ -163,6 +173,10 @@ class CharacterDecomposer:
             for line in f:
                 line_number += 1
                 record = self._parse_line(line, line_number)
+                if record == None:
+                    # There was a detectable problem with the line. Just
+                    # ignore it
+                    continue
                 assert(not record_id(record) in self._decomp_table)
                 self._decomp_table[record_id(record)] = record
 
