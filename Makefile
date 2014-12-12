@@ -7,13 +7,15 @@ DICTIONARY_FILE=data/cedict_1_0_ts_utf-8_mdbg_modified.txt
 .PHONY:	all
 all:	check_decomposition_data ${DICTIONARY_DIR}
 
+PYTHONPATH	:=	${PWD}/lib:${PYTHONPATH}
+
 ${DICTIONARY_DIR}:	${DICTIONARY_FILE}
 	rm -rf src/zhonglib-data/dictionary
-	PYTHONPATH=${PWD}/lib:${PYTHONPATH} src/mkfulldict.py ${DICTIONARY_FILE} ${DICTIONARY_DIR}
+	src/mkfulldict.py ${DICTIONARY_FILE} ${DICTIONARY_DIR}
 
 .PHONY:	check_decomposition_data
 check_decomposition_data:
-	PYTHONPATH=${PWD}/lib:${PYTHONPATH} src/chkcycle.py src/zhonglib-data/decomposition-data.txt
+	src/chkcycle.py src/zhonglib-data/decomposition-data.txt
 
 .PHONY:	install
 install:	all
